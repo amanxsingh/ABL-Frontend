@@ -1,0 +1,130 @@
+/* Navbar Container */
+.navbar {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Brand Logo */
+.navbar-brand img {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+/* Welcome Message */
+.welcome-container {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.welcome-message {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Navbar Toggler */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler-icon {
+  font-size: 1.2rem;
+  color: #000;
+}
+
+/* Navbar Links */
+.nav-link {
+  color: #333;
+  font-size: 1.25rem;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link:hover {
+  color: #007bff;
+}
+
+.nav-item .bi-bell {
+  color: #007bff;
+  transition: color 0.3s ease;
+}
+
+.nav-item .bi-bell:hover {
+  color: #0056b3;
+}
+
+/* Profile Dropdown */
+.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.dropdown-toggle img {
+  border-radius: 50%;
+  margin-right: 10px;
+  transition: transform 0.2s ease;
+}
+
+.dropdown-toggle img:hover {
+  transform: scale(1.1);
+}
+
+.dropdown-toggle span {
+  color: #007bff;
+  font-weight: 500;
+}
+
+.dropdown-menu {
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+  color: #333;
+  padding: 0.75rem 1.5rem;
+}
+
+.dropdown-item:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Media Queries */
+@media (max-width: 991px) {
+  .welcome-container {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .navbar-toggler {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 575px) {
+  .welcome-message {
+    font-size: 1.25rem;
+  }
+
+  .dropdown-toggle img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .nav-link {
+    font-size: 1.1rem;
+  }
+
+  .nav-item .bi-bell {
+    font-size: 1.3rem;
+  }
+}
