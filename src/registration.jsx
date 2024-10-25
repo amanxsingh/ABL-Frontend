@@ -14,19 +14,6 @@ const RegistrationForm = () => {
     grade: "", // Only for student
     section: "", // Only for student
     school: "", // Used for teacher and school and students
-    city: "",
-    state: "",
-    country: "",
-    principal_name: "",
-    principal_number: "",
-    principal_email: "",
-    teacher_coordinator: "",
-    teacher_coordinator_number: "",
-    teacher_coordinator_email: "",
-    account_name: "",
-    accountant_number: "",
-    account_email: "",
-    geo_location: "",
   });
 
   const [responseData, setResponseData] = useState(null);
@@ -51,7 +38,7 @@ const RegistrationForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://192.168.1.13:8000/register/",
+        "http://192.168.1.12:8000/register/",
         formData
       );
       setResponseData(response.data);
@@ -141,123 +128,6 @@ const RegistrationForm = () => {
               value={formData.school}
               onChange={handleChange}
             />
-            <label>
-              City
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-              />
-              <label>
-                State
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Country
-                <input
-                  type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                />
-                <label>
-                  Principal Name
-                  <input
-                    type="text"
-                    name="principal_name"
-                    value={formData.principal_name}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label>
-                  Principal Number
-                  <input
-                    type="text"
-                    name="principal_number"
-                    value={formData.principal_number}
-                    onChange={handleChange}
-                  />
-                  <label>
-                    Principal Email
-                    <input
-                      type="text"
-                      name="principal_email"
-                      value={formData.principal_email}
-                      onChange={handleChange}
-                    />
-                    <label>
-                      Teacher Coordinator
-                      <input
-                        type="text"
-                        name="teacher_coordinator"
-                        value={formData.teacher_coordinator}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <label>
-                      Teacher Coordinator Number
-                      <input
-                        type="text"
-                        name="teacher_coordinator_number"
-                        value={formData.teacher_coordinator_number}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <label>
-                      Teacher Coordinator Email
-                      <input
-                        type="text"
-                        name="teacher_coordinator_email"
-                        value={formData.teacher_coordinator_email}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <label>
-                      Accountant Name
-                      <input
-                        type="text"
-                        name="account_name"
-                        value={formData.account_name}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <label>
-                      Accountant Number
-                      <input
-                        type="text"
-                        name="accountant_number"
-                        value={formData.accountant_number}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <label>
-                      Accountant Email
-                      <input
-                        type="text"
-                        name="account_email"
-                        value={formData.account_email}
-                        onChange={handleChange}
-                      />
-                    </label>
-                    <label>
-                      Geo Location
-                      <input
-                        type="text"
-                        name="geo_location"
-                        value={formData.geo_location}
-                        onChange={handleChange}
-                      />
-                    </label>
-                  </label>
-                </label>
-              </label>
-            </label>
           </label>
         </div>
       );

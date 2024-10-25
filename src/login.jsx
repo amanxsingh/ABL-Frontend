@@ -28,7 +28,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.34:8000/login/",
+        "http://192.168.1.12:8000/login/",
         formData
       );
       const { username } = response.data;

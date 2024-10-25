@@ -13,7 +13,7 @@ const ProfileForm = ({ onClose }) => {
       try {
         if (username) {
           const response = await axios.get(
-            `http://192.168.1.34:8000/student-profile/${username}/`, // Use dynamic username from props
+            `http://192.168.1.12:8000/student-profile/${username}/`, // Use dynamic username from props
             {
               method: "GET",
               headers: {

@@ -23,9 +23,26 @@ body {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
   position: relative;
   overflow: hidden;
-  width: 798px;
   max-width: 100%;
-  min-height: 480px;
+  min-width: 850px;
+  min-height: 500px;
+}
+
+.container h1 {
+  margin-top: 50px;
+}
+
+/* Success message container styling */
+.success-message {
+  display: none; /* Hidden by default */
+  margin-top: 20px; /* Space below the Sign Up button */
+  text-align: center; /* Center-align the text */
+  background-color: #e0f7fa; /* Light background for emphasis */
+  padding: 15px 20px;
+  border-radius: 8px;
+  color: #00796b; /* Text color */
+  font-size: 16px;
+  box-shadow: 0;
 }
 
 .container p {
@@ -49,14 +66,15 @@ body {
 .container button {
   background-color: #02052c;
   color: #fff;
-  font-size: 12px;
-  padding: 10px 45px;
+  font-size: 14px;
+  padding: 12px 50px;
   border: 1px solid transparent;
   border-radius: 8px;
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  margin-top: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   cursor: pointer;
 }
 
@@ -78,9 +96,9 @@ body {
 .container input {
   background-color: #eee;
   border: none;
-  margin: 8px 0;
-  padding: 10px 15px;
-  font-size: 13px;
+  margin: 10px 0;
+  padding: 12px 15px;
+  font-size: 14px;
   border-radius: 8px;
   width: 100%;
   outline: none;
@@ -117,6 +135,75 @@ body {
   animation: move 0.6s;
 }
 
+/* Scrollable container for common and role-based fields */
+.scrollable-container {
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto; /* Vertical scroll */
+  padding-right: 10px; /* To make space for the scrollbar */
+}
+
+/* Ensure consistent width for all input fields */
+form input,
+form select {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  box-sizing: border-box;
+}
+
+/* General styling for the label to be consistent with other fields */
+label {
+  width: 100%;
+  display: block;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Style for the Role dropdown to match other input fields */
+label select {
+  display: block;
+  width: 350px; /* Ensure it spans the full width of the container */
+  padding: 12px; /* Consistent padding with other input fields */
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box; /* Make sure padding is included in width calculation */
+}
+
+/* Hover state for the select dropdown */
+label select:hover {
+  border-color: #888;
+}
+
+/* Focus state for the select dropdown */
+label select:focus {
+  border-color: #007bff; /* Blue border on focus */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+/* Dropdown options styling */
+label select option {
+  font-size: 14px;
+  color: #333;
+  padding: 5px;
+}
+
+/* Disabled state styling for the select dropdown */
+label select:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
 @keyframes move {
   0%,
   49.99% {
@@ -130,21 +217,6 @@ body {
   }
 }
 
-.social-icons {
-  margin: 20px 0;
-}
-
-.social-icons a {
-  border: 1px solid #ccc;
-  border-radius: 20%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 3px;
-  width: 40px;
-  height: 40px;
-}
-
 .toggle-container {
   position: absolute;
   top: 0;
@@ -153,13 +225,13 @@ body {
   height: 100%;
   overflow: hidden;
   transition: all 0.6s ease-in-out;
-  border-radius: 150px 0 0 100px;
+  border-radius: 150px 0 0 150px;
   z-index: 1000;
 }
 
 .container.active .toggle-container {
   transform: translateX(-100%);
-  border-radius: 0 150px 100px 0;
+  border-radius: 0 150px 150px 0;
 }
 
 .toggle {

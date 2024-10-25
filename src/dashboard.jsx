@@ -23,7 +23,7 @@ const StudentDashboard = () => {
           navigate("/login");
         } else {
           const response = await fetch(
-            `http://192.168.1.34:8000/student_dashboard/${username}/`,
+            `http://192.168.1.12:8000/student_dashboard/${username}/`,
             {
               method: "GET",
               headers: {

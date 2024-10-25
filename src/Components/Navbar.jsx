@@ -23,7 +23,7 @@ const Navbar = () => {
           navigate("/login");
         } else {
           const response = await fetch(
-            `http://192.168.1.34:8000/student_dashboard/${username}/`,
+            `http://192.168.1.12:8000/student_dashboard/${username}/`,
             {
               method: "GET",
               headers: {
@@ -65,7 +65,7 @@ const Navbar = () => {
   // Function to handle logout
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://192.168.1.34:8000/logout/", {
+      const response = await fetch("http://192.168.1.12:8000/logout/", {
         method: "POST",
         headers: {
           accept: "application/json",
