@@ -158,7 +158,7 @@ const LoginPage = () => {
       // Reset `isRegistered` after 3 seconds to revert button text
       const timer = setTimeout(() => {
         setIsRegistered(false);
-      }, 3000);
+      }, 5000);
 
       return () => clearTimeout(timer); // Clean up the timer on unmount
     }
