@@ -1,59 +1,3 @@
-// import { useState } from "react";
-// import Login from "./login"; // Import the Login component
-// import RegistrationForm from "./registration"; // Import the RegistrationForm component
-// import "./signup.css"; // Import your CSS file for styling
-
-// function App() {
-//   const [showLogin, setShowLogin] = useState(true);
-//   const [animationClass, setAnimationClass] = useState("pop-in");
-
-//   const handleToggle = (isLogin) => {
-//     // First, apply the exit animation
-//     setAnimationClass("pop-out");
-
-//     // Wait for the exit animation to finish before toggling the form
-//     setTimeout(() => {
-//       setShowLogin(isLogin);
-//       setAnimationClass("pop-in"); // Apply pop-in animation for the new form
-//     }, 300); // Match this time with the animation duration (300ms)
-//   };
-
-//   return (
-//     <div className="app-page">
-//       <div
-//         className={`background-container ${
-//           showLogin ? "login-bg" : "register-bg"
-//         }`}
-//       >
-//         <div className="form-wrapper">
-//           <div className="button-container">
-//             <button
-//               className={`toggle-button ${showLogin ? "active" : ""}`}
-//               onClick={() => handleToggle(true)}
-//               aria-pressed={showLogin}
-//             >
-//               Login
-//             </button>
-//             <button
-//               className={`toggle-button ${!showLogin ? "active" : ""}`}
-//               onClick={() => handleToggle(false)}
-//               aria-pressed={!showLogin}
-//             >
-//               Register
-//             </button>
-//           </div>
-
-//           {/* Use the same container for both login and register with animation */}
-//           <div className={`form-container ${animationClass}`}>
-//             {showLogin ? <Login /> : <RegistrationForm />}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default App;
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -136,7 +80,7 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.12:8000/register/",
+        "https://worm-dear-centrally.ngrok-free.app/register/",
         formData
       );
       setResponseData(response.data);
@@ -152,6 +96,15 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
+
+  // Inside your specific page component
+  useEffect(() => {
+    document.body.classList.add("login-page");
+
+    return () => {
+      document.body.classList.remove("login-page");
+    };
+  }, []);
 
   useEffect(() => {
     if (isRegistered) {

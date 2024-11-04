@@ -3,6 +3,8 @@ import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import ProfileForm from "./ProfileSetting"; // Assuming ProfileForm is a separate component
 import "bootstrap-icons/font/bootstrap-icons.css";
+import BellButton from "../UIcomponents/bell";
+// import "./navbar.css";
 
 const Navbar = () => {
   const [data, setData] = useState(null);
@@ -126,7 +128,9 @@ const Navbar = () => {
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
             <li className="nav-item mx-3 d-flex justify-content-center align-items-center">
               <a className="nav-link" href="#">
-                <i className="bi bi-bell" style={{ fontSize: "1.5rem" }}></i>
+                <div>
+                  <BellButton />
+                </div>
               </a>
             </li>
 

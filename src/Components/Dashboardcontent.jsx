@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import ProfileForm from "./ProfileSetting"; // Assuming ProfileForm is a separate component
 import "./Dashboardcontent.css"; // Custom CSS for the layout
 import "bootstrap-icons/font/bootstrap-icons.css"; // Bootstrap icons
+import Card from "../UIcomponents/card"; // Updated to use uppercase `Card` for the component
 
 const DashboardPage = () => {
   const [data, setData] = useState(null);
@@ -72,18 +73,15 @@ const Dashboardcontent = ({ data }) => {
           <div className="subject-cards-container">
             {data.subjects && Array.isArray(data.subjects)
               ? data.subjects.map((subject, index) => (
-                  <div className="card" key={index}>
-                    <img
-                      src={subject.image || "https://via.placeholder.com/150"}
-                      className="card-img-top"
-                      alt={subject.name}
+                  <div key={index}>
+                    <Card
+                      title={subject.name}
+                      description={
+                        subject.description || "No description available."
+                      }
+                      image={subject.image || "https://via.placeholder.com/150"}
+                      logo="path/to/logo.png"
                     />
-                    <div className="card-body">
-                      <h5 className="card-title">{subject.name}</h5>
-                      <p className="card-text">
-                        {subject.description || "No description available."}
-                      </p>
-                    </div>
                   </div>
                 ))
               : "No subjects available."}
@@ -144,7 +142,7 @@ Dashboardcontent.propTypes = {
     subjects: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
-        image: PropTypes.string, // Adjust based on API response
+        image: PropTypes.string,
         description: PropTypes.string,
       })
     ),
