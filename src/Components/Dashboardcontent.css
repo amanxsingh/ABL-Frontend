@@ -1,6 +1,6 @@
 .dashboard-container {
   display: flex;
-  height: 100vh; /* Full height of the viewport */
+  height: 88vh; /* Full height of the viewport */
 }
 
 .button-panel {
@@ -9,9 +9,39 @@
   flex-direction: column;
   gap: 1rem; /* Gap between buttons */
   padding: 1rem;
-  background-color: #f8f9fa; /* Light gray background */
+  padding-top: 2rem;
+  /* background: linear-gradient(to left, #9aa7db, #3f57b5); */
+  background-color: #c53678;
 }
 
+.button-panel button {
+  background-color: #ffffff; /* Primary button color */
+  color: #000000; /* Text color */
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  /* transition: background-color 0.3s ease; */
+}
+
+.button-panel button:hover {
+  background-color: #ffffff;
+}
+
+.button-panel button .button-text {
+  display: inline-block; /* Ensure the text is treated as a block for transform */
+  transition: transform 0.3s ease-in-out, color 0.3s ease-in-out; /* Smooth transition */
+}
+
+.button-panel button:hover .button-text {
+  transform: scale(1.05); /* Scale up only the text */
+  color: #000000; /* Change text color on hover */
+}
+
+/* .button-panel button.active span {
+  color: #e0e0e0; 
+} */
 .content-panel {
   width: 75%; /* 75% of the width for content */
   padding: 2rem;

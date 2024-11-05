@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import ProfileForm from "./ProfileSetting"; // Assuming ProfileForm is a separate component
 import "bootstrap-icons/font/bootstrap-icons.css";
 import BellButton from "../UIcomponents/bell";
-// import "./navbar.css";
+import "./navbar.css";
+import Learning from "../learning";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [data, setData] = useState(null);
@@ -25,7 +27,7 @@ const Navbar = () => {
           navigate("/login");
         } else {
           const response = await fetch(
-            `http://192.168.1.12:8000/student_dashboard/${username}/`,
+            `http://192.168.1.9:8000/student_dashboard/${username}/`,
             {
               method: "GET",
               headers: {
@@ -90,15 +92,13 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
-      <div className="container-fluid">
+    <nav className="navbar">
+      <div className="navbar-content">
         <a className="navbar-brand" href="/">
           <img
             src="\src\assets\pictures\abl_lms.jpg"
             alt="Logo"
-            width="90"
-            height="60"
-            className="d-inline-block align-text-top"
+            className="brand-logo"
           />
         </a>
 
@@ -112,53 +112,33 @@ const Navbar = () => {
           )}
         </div>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
+        <div className="navbar-links">
+          <Link to="/learning" className="nav-link">
+            <BellButton />
+          </Link>
 
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
-            <li className="nav-item mx-3 d-flex justify-content-center align-items-center">
-              <a className="nav-link" href="#">
-                <div>
-                  <BellButton />
-                </div>
-              </a>
-            </li>
-
-            <li className="nav-item dropdown">
-              <Dropdown>
-                <Dropdown.Toggle variant="none" id="dropdown-basic">
-                  <img
-                    src={
-                      data.profile.profile_pic ||
-                      "https://via.placeholder.com/40"
-                    }
-                    alt="Profile"
-                    className="rounded-circle"
-                    width="40"
-                    height="40"
-                  />
-                  <span className="ms-2">{data.profile.user.username}</span>
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu align="end">
-                  <Dropdown.Item onClick={() => setShowProfileForm(true)}>
-                    Profile Settings
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </li>
-          </ul>
+          <Dropdown>
+            <Dropdown.Toggle
+              variant="none"
+              id="dropdown-basic"
+              className="dropdown-toggle"
+            >
+              <img
+                src={
+                  data.profile.profile_pic || "https://via.placeholder.com/40"
+                }
+                alt="Profile"
+                className="profile-image"
+              />
+              <span>{data.profile.user.username}</span>
+            </Dropdown.Toggle>
+            <Dropdown.Menu align="end">
+              <Dropdown.Item onClick={() => setShowProfileForm(true)}>
+                Profile Settings
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </div>
 

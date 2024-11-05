@@ -21,7 +21,7 @@ const StudentDashboard = () => {
           navigate("/login");
         } else {
           const response = await fetch(
-            `http://192.168.1.12:8000/student_dashboard/${username}/`, // Use proxy prefix `/api`
+            `http://192.168.1.9:8000/student_dashboard/${username}/`, // Use proxy prefix `/api`
             {
               method: "GET",
               headers: {
@@ -65,7 +65,7 @@ const StudentDashboard = () => {
     <div>
       <Navbar />
       <DashboardPage />
-      <h1>Welcome, {dashboardData && dashboardData.profile.name}!</h1>
+      {/* <h1>Welcome, {dashboardData && dashboardData.profile.name}!</h1> */}
       {/* Render other dashboard data if available */}
     </div>
   );

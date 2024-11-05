@@ -21,7 +21,7 @@ const DashboardPage = () => {
           window.location.href = "/login";
         } else {
           const response = await fetch(
-            `http://192.168.1.12:8000/student_dashboard/${username}/`,
+            `http://192.168.1.9:8000/student_dashboard/${username}/`,
             {
               method: "GET",
               headers: {
@@ -126,7 +126,8 @@ const Dashboardcontent = ({ data }) => {
             }`}
             onClick={() => setActiveContent(item.key)}
           >
-            {item.label}
+            <span className="button-text">{item.label}</span>
+            {/* {item.label} */}
           </button>
         ))}
       </div>

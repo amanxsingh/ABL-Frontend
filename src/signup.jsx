@@ -51,7 +51,7 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://192.168.1.12:8000/login/", {
+      const response = await axios.post("http://192.168.1.9:8000/login/", {
         username_or_email: formData.username_or_email,
         password: formData.user.password,
       });
@@ -80,7 +80,7 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-        "https://worm-dear-centrally.ngrok-free.app/register/",
+        "http://192.168.1.9:8000/register/",
         formData
       );
       setResponseData(response.data);

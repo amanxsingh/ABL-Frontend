@@ -6,6 +6,7 @@ import Signup from "./signup";
 import Dashboard from "./dashboard";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Learning from "./learning";
 
 // Create a context to hold the authentication state
 export const AuthContext = createContext();
@@ -45,6 +46,7 @@ function App() {
           }
         />
         <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/learning" element={<Learning />} />
       </Routes>
     </AuthContext.Provider>
   );
