@@ -46,7 +46,14 @@ function App() {
           }
         />
         <Route path="*" element={<Navigate to="/" />} />
-        <Route path="/learning" element={<Learning />} />
+        <Route
+          path="/learning/:standard/:subject/"
+          element={
+            <PrivateRoute>
+              <Learning />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </AuthContext.Provider>
   );

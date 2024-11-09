@@ -1,47 +1,35 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import ProfileForm from "./ProfileSetting"; // Assuming ProfileForm is a separate component
-import "./Dashboardcontent.css"; // Custom CSS for the layout
-import "bootstrap-icons/font/bootstrap-icons.css"; // Bootstrap icons
-import Card from "../UIcomponents/card"; // Updated to use uppercase `Card` for the component
+import { Link } from "react-router-dom";
+import ProfileForm from "./ProfileSetting";
+import "./Dashboardcontent.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import Card from "../UIcomponents/card";
+import { fetchStudentDashboard } from "../apiservice";
+import { propTypes } from "react-bootstrap/esm/Image";
 
 const DashboardPage = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // Loading state
-  const username = localStorage.getItem("username"); // Fetch username from localStorage
-  const isAuthenticated = localStorage.getItem("isAuthenticated"); // Check if user is authenticated
+  const [loading, setLoading] = useState(true);
+  const username = localStorage.getItem("username");
+  const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-  // Fetch dashboard data
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (isAuthenticated !== "true") {
-          // Redirect to login if not authenticated
-          window.location.href = "/login";
+          window.location.href = "/login"; // Redirect to login if not authenticated
         } else {
-          const response = await fetch(
-            `http://192.168.1.9:8000/student_dashboard/${username}/`,
-            {
-              method: "GET",
-              headers: {
-                accept: "application/json",
-                Authorization: "Basic c3R1ZGVudDE6cGFzc3dvcmQxMjM0", // Basic auth credentials
-              },
-            }
-          );
-
-          if (response.ok) {
-            const data = await response.json();
-            setData(data);
+          const result = await fetchStudentDashboard(username); // Pass username to the API call
+          if (result.success) {
+            setData(result.data); // Store the data in state
           } else {
-            setError("Error fetching data.");
-            console.error("Error fetching dashboard data:", response.status);
+            setError(result.error || "An error occurred while fetching data.");
           }
         }
       } catch (err) {
         setError("An error occurred while fetching data.");
-        console.error("An error occurred:", err);
       } finally {
         setLoading(false);
       }
@@ -53,14 +41,14 @@ const DashboardPage = () => {
   }, [username, isAuthenticated]);
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>{error}</div>; // Display error if there is any
   }
 
   if (loading) {
-    return <p>Loading data, please wait...</p>;
+    return <p>Loading data, please wait...</p>; // Show loading message while data is being fetched
   }
 
-  return data ? <Dashboardcontent data={data} /> : <p>No data available.</p>;
+  return data ? <Dashboardcontent data={data} /> : <p>No data available.</p>; // Pass data to Dashboardcontent
 };
 
 const Dashboardcontent = ({ data }) => {
@@ -74,14 +62,20 @@ const Dashboardcontent = ({ data }) => {
             {data.subjects && Array.isArray(data.subjects)
               ? data.subjects.map((subject, index) => (
                   <div key={index}>
-                    <Card
-                      title={subject.name}
-                      description={
-                        subject.description || "No description available."
-                      }
-                      image={subject.image || "https://via.placeholder.com/150"}
-                      logo="path/to/logo.png"
-                    />
+                    <Link
+                      to={`/learning/${data.profile.grade}/${subject.slug}/`}
+                    >
+                      <Card
+                        title={subject.name}
+                        description={
+                          subject.description || "No description available."
+                        }
+                        image={
+                          subject.image || "https://via.placeholder.com/150"
+                        }
+                        logo="path/to/logo.png"
+                      />
+                    </Link>
                   </div>
                 ))
               : "No subjects available."}
@@ -127,7 +121,6 @@ const Dashboardcontent = ({ data }) => {
             onClick={() => setActiveContent(item.key)}
           >
             <span className="button-text">{item.label}</span>
-            {/* {item.label} */}
           </button>
         ))}
       </div>
@@ -137,14 +130,20 @@ const Dashboardcontent = ({ data }) => {
   );
 };
 
-// Prop types validation for Dashboardcontent component
 Dashboardcontent.propTypes = {
   data: PropTypes.shape({
+    profile: PropTypes.arrayOf(
+      PropTypes.shape({
+        grade: PropTypes.string.isRequired,
+      })
+    ),
     subjects: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
         image: PropTypes.string,
         description: PropTypes.string,
+        Standard: PropTypes.string,
+        slug: PropTypes.string,
       })
     ),
   }),

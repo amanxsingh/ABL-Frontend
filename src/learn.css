@@ -3,7 +3,7 @@
   height: 100vh;
 }
 
-.navbar {
+.navbar1 {
   position: relative;
   display: flex;
   align-items: center;
@@ -12,7 +12,7 @@
   height: 80px;
 }
 
-.navbar-text {
+.navbar1-text {
   position: absolute;
   left: 20px;
   font-size: 18px;

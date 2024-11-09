@@ -1,14 +1,15 @@
+// LoginPage.js
 import { useState, useContext, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./App";
 import "./signup.css";
+import { login, register } from "./apiservice";
 
 const LoginPage = () => {
   const [isActive, setIsActive] = useState(false);
   const [formData, setFormData] = useState({
     user: {
-      role: "", // Default role as empty to show placeholder
+      role: "",
       username: "",
       email: "",
       password: "",
@@ -19,7 +20,6 @@ const LoginPage = () => {
     section: "",
     school: "",
   });
-
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [responseData, setResponseData] = useState(null);
@@ -27,9 +27,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
 
+  // Handle input changes for login and sign-up forms
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (["role", "username", "email", "password"].includes(name)) {
       setFormData((prevState) => ({
         ...prevState,
@@ -46,84 +46,60 @@ const LoginPage = () => {
     }
   };
 
+  // Handle login form submission
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      const response = await axios.post("http://192.168.1.9:8000/login/", {
-        username_or_email: formData.username_or_email,
-        password: formData.user.password,
-      });
-      const { username } = response.data;
+    const { username_or_email, user } = formData;
+    const result = await login(username_or_email, user.password);
 
-      localStorage.setItem("username", username);
-      localStorage.setItem("isAuthenticated", "true");
-
+    setLoading(false);
+    if (result.success) {
       setIsAuthenticated(true);
       setError(null);
-      setLoading(false);
       navigate("/dashboard");
-    } catch (error) {
-      setLoading(false);
-      if (error.response) {
-        setError(error.response.data.non_field_errors || "Login failed.");
-      } else {
-        setError("An unexpected error occurred.");
-      }
+    } else {
+      setError(result.error);
     }
   };
 
+  // Handle sign-up form submission
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      const response = await axios.post(
-        "http://192.168.1.9:8000/register/",
-        formData
-      );
-      setResponseData(response.data);
-      setIsRegistered(true); // Set registration success state
+    const result = await register(formData);
+    setLoading(false);
+
+    if (result.success) {
+      setResponseData(result.data);
+      setIsRegistered(true);
       setError(null);
-    } catch (error) {
-      if (error.response) {
-        setError(error.response.data.error || "Registration failed.");
-      } else {
-        setError("An unexpected error occurred.");
-      }
-    } finally {
-      setLoading(false);
+    } else {
+      setError(result.error);
     }
   };
 
-  // Inside your specific page component
   useEffect(() => {
     document.body.classList.add("login-page");
-
     return () => {
       document.body.classList.remove("login-page");
     };
   }, []);
 
+  // Reset registration state after 5 seconds
   useEffect(() => {
     if (isRegistered) {
-      // Reset `isRegistered` after 3 seconds to revert button text
       const timer = setTimeout(() => {
         setIsRegistered(false);
       }, 5000);
-
-      return () => clearTimeout(timer); // Clean up the timer on unmount
+      return () => clearTimeout(timer);
     }
   }, [isRegistered]);
 
-  const handleRegisterClick = () => {
-    setIsActive(true);
-  };
-
-  const handleLoginClick = () => {
-    setIsActive(false);
-  };
+  const handleRegisterClick = () => setIsActive(true);
+  const handleLoginClick = () => setIsActive(false);
 
   const roleFields = {
     student: [
@@ -139,6 +115,7 @@ const LoginPage = () => {
     school: [{ name: "school", placeholder: "School Name" }],
   };
 
+  // Render form fields specific to the selected role
   const renderRoleSpecificFields = () => {
     return roleFields[formData.user.role]?.map(({ name, placeholder }) => (
       <label key={name}>
@@ -153,12 +130,9 @@ const LoginPage = () => {
     ));
   };
 
-  useEffect(() => {
-    setIsActive(false);
-  }, []);
-
   return (
     <div className={`container ${isActive ? "active" : ""}`} id="container">
+      {/* Sign-up form */}
       <div className="form-container sign-up">
         <form onSubmit={handleSignUpSubmit}>
           <h1>Create Account</h1>
@@ -178,7 +152,6 @@ const LoginPage = () => {
                 <option value="school">School</option>
               </select>
             </label>
-
             <input
               type="text"
               name="username"
@@ -203,10 +176,8 @@ const LoginPage = () => {
               onChange={handleChange}
               required
             />
-
             {renderRoleSpecificFields()}
           </div>
-
           <button type="submit" disabled={loading || isRegistered}>
             {loading
               ? "Registering..."
@@ -222,12 +193,11 @@ const LoginPage = () => {
         </form>
       </div>
 
-      {/* Login Form */}
+      {/* Login form */}
       <div className="form-container sign-in">
         <form onSubmit={handleSignInSubmit}>
           <h1>Sign In</h1>
           <span>or use your email and password</span>
-
           <input
             type="text"
             name="username_or_email"
@@ -256,20 +226,19 @@ const LoginPage = () => {
         </form>
       </div>
 
+      {/* Toggle container */}
       <div className="toggle-container">
         <div className="toggle">
           <div className="toggle-panel toggle-left">
             <h1>Welcome Back!</h1>
-            <p>Enter your personal details to use all of site features</p>
+            <p>Enter your personal details to use all site features</p>
             <button className="hidden" id="login" onClick={handleLoginClick}>
               Sign In
             </button>
           </div>
           <div className="toggle-panel toggle-right">
             <h1>Hello, Friend!</h1>
-            <p>
-              Register with your personal details to use all of site features
-            </p>
+            <p>Register with your personal details to use all site features</p>
             <button
               className="hidden"
               id="register"

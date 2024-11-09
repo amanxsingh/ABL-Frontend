@@ -1,0 +1,193 @@
+/* Layout for the whole dashboard */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #5840ba;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 250px;
+  background-color: #5840ba;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: width 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+/* Collapsed Sidebar */
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* Sidebar Profile Section */
+.sidebar-profile {
+  overflow: hidden;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+/* Profile Image */
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+/* Adjust profile picture size when sidebar is collapsed */
+.sidebar.collapsed .profile-image {
+  width: 40px;
+  height: 40px;
+}
+
+/* Sidebar Logo */
+.sidebar-logo {
+  margin-bottom: 20px;
+}
+
+.brand-logo {
+  width: 100%;
+  height: auto;
+  max-width: 120px;
+  border-radius: 10px;
+  transition: width 0.3s;
+}
+
+.sidebar.collapsed .brand-logo {
+  max-width: 40px;
+}
+
+/* Button Panel in Sidebar */
+.button-panel .btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  color: #fff; /* Set button text color to white */
+}
+
+.btn-secondary {
+  background-color: #7f6af7;
+  color: #fff;
+  border: none;
+}
+
+.btn-outline-secondary {
+  color: #fff;
+  border: 1px solid #7f6af7;
+  background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #7f6af7;
+  color: #fff;
+}
+
+.button-icon {
+  font-size: 1.2rem;
+  margin-right: 10px;
+  color: #fff; /* Set icon color to white */
+}
+
+.sidebar.collapsed .button-icon {
+  margin-right: 0;
+}
+
+.button-text {
+  transition: opacity 0.3s;
+}
+
+.sidebar.collapsed .button-text {
+  display: none;
+}
+
+/* Logout Section Styling */
+.logout-section {
+  margin-top: auto;
+  width: 100%;
+}
+
+.btn-logout {
+  width: 100%;
+  color: #fff;
+  background-color: #dc3545;
+  padding: 10px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.btn-logout:hover {
+  background-color: #c82333;
+}
+
+/* Content Panel Styling */
+.content-panel {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  margin: 10px;
+  border-radius: 25px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  position: relative;
+  margin-left: -10px; /* Overlay over the sidebar */
+  overflow: hidden;
+}
+
+/* Subject Card Styling */
+.subject-card {
+  background-color: #f7f7f7;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Subject Image */
+.subject-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+/* Subject Button */
+.subject-card .btn {
+  background-color: #7f6af7;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.subject-card .btn:hover {
+  background-color: #6e5de4;
+}

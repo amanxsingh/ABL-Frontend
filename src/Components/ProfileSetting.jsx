@@ -1,43 +1,31 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import PropTypes from "prop-types";
+import { fetchStudentProfile } from "../apiservice"; // Import the new API function
 
 const ProfileForm = ({ onClose }) => {
-  const [profileData, setProfileData] = useState(null); // Initially null to handle loading
+  const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const username = localStorage.getItem("username");
 
   useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        if (username) {
-          const response = await axios.get(
-            `http://192.168.1.9:8000/student-profile/${username}/`, // Use dynamic username from props
-            {
-              method: "GET",
-              headers: {
-                accept: "application/json",
-                Authorization: "Basic c3R1ZGVudDE6cGFzc3dvcmQxMjM0", // Use your basic auth credentials
-              },
-            }
-          );
-
-          const profile = response.data;
-          console.log("Fetched Data:", profile);
-          setProfileData(profile);
-        } else {
-          setError("Username not provided.");
-        }
-      } catch (err) {
-        setError("Error fetching profile data.");
-        console.error("An error occurred:", err);
-      } finally {
+    const loadProfileData = async () => {
+      if (!username) {
+        setError("Username not provided.");
         setLoading(false);
+        return;
       }
+
+      const result = await fetchStudentProfile(username);
+      if (result.success) {
+        setProfileData(result.data);
+      } else {
+        setError(result.error);
+      }
+      setLoading(false);
     };
 
-    fetchProfileData();
+    loadProfileData();
   }, [username]);
 
   if (loading) {
@@ -67,7 +55,6 @@ const ProfileForm = ({ onClose }) => {
             readOnly
           />
         </div>
-
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
@@ -147,7 +134,6 @@ const ProfileForm = ({ onClose }) => {
           )}
         </div>
 
-        {/* Save and Close buttons */}
         <div
           style={{
             display: "flex",
@@ -173,7 +159,6 @@ const ProfileForm = ({ onClose }) => {
 };
 
 ProfileForm.propTypes = {
-  username: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 

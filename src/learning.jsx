@@ -1,49 +1,87 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import PropTypes from "prop-types";
+import { useParams, useNavigate } from "react-router-dom"; // Updated import
+import { curriculum } from "./apiservice";
 import "./learn.css";
 
 const Learning = () => {
   const totalCircles = 8;
-  const [currentCircle, setCurrentCircle] = useState(0); // Start on the first circle
+  const [currentCircle, setCurrentCircle] = useState(0);
   const [circleStatus, setCircleStatus] = useState(
     Array(totalCircles)
       .fill("white")
       .map((color, index) => (index === 0 ? "orange" : color))
-  ); // First circle is orange by default
-  const [sectionData, setSectionData] = useState(null); // Data for each section
+  );
+  const [sectionData, setSectionData] = useState(null);
+  const [allLessons, setAllLessons] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedButton, setSelectedButton] = useState("content");
 
-  // Fetch content for the selected circle
+  const { subject, standard } = useParams();
+  const navigate = useNavigate(); // Updated hook
+
   useEffect(() => {
+    // Check if the user is authenticated
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      // Redirect to login if no token is found
+      navigate("/login");
+      return;
+    }
+
     const fetchContent = async () => {
-      try {
-        const response = await axios.get(`http://192.168.1.9:8000/curriculum/`);
-        setSectionData(response.data); // Update section data based on API response
-      } catch (err) {
-        setError("Failed to load data. Please try again later.");
-        console.error("Error fetching data:", err); // Log the error
+      setLoading(true);
+      const response = await curriculum(subject, standard);
+      if (response.success) {
+        setAllLessons(response.data);
+        setError(null);
+
+        // Set the first lesson (position 1) as default
+        const firstLesson = response.data.find((item) => item.position === 1);
+        if (firstLesson) {
+          setCurrentCircle(0);
+          setSectionData(firstLesson);
+        }
+      } else {
+        setError(response.error);
       }
+      setLoading(false);
     };
 
     fetchContent();
-  }, [currentCircle]);
+  }, [subject, standard, navigate]);
 
-  // Handle circle click to set the active circle and update colors
   const handleCircleClick = (index) => {
     if (index > currentCircle || index === 0) {
       const newStatus = [...circleStatus];
-      if (currentCircle !== index) newStatus[currentCircle] = "green"; // Mark previous as green
-      newStatus[index] = "orange"; // Set clicked circle to orange
+      if (currentCircle !== index) newStatus[currentCircle] = "green";
+      newStatus[index] = "orange";
       setCircleStatus(newStatus);
-      setCurrentCircle(index); // Update current circle
+      setCurrentCircle(index);
+
+      const lesson = allLessons.find((item) => item.position === index + 1);
+      if (lesson) {
+        setSectionData(lesson);
+      }
     }
+  };
+
+  const handleButtonClick = (button) => {
+    setSelectedButton(button);
+  };
+
+  const getEmbedUrl = (url) => {
+    if (url && url.includes("youtube.com/watch?v=")) {
+      return url.replace("watch?v=", "embed/");
+    }
+    return url;
   };
 
   return (
     <div className="learning-container">
-      <nav className="navbar">
+      <nav className="navbar1">
         <div className="navbar-text">Your Progress</div>
-
         <div className="circle-container">
           {circleStatus.map((color, index) => (
             <div
@@ -56,8 +94,6 @@ const Learning = () => {
             </div>
           ))}
         </div>
-
-        {/* Show "Next Chapter" button only when last circle is clicked */}
         {currentCircle === totalCircles - 1 && (
           <button
             className="next-chapter-button"
@@ -69,31 +105,126 @@ const Learning = () => {
       </nav>
 
       <div className="content-layout">
-        {/* Left container with buttons */}
         <div className="left-menu">
-          <button className="menu-button">Video</button>
-          <button className="menu-button">Simulator</button>
-          <button className="menu-button">Theory</button>
-          <button className="menu-button">Quiz</button>
-          <button className="menu-button">Test</button>
+          <button
+            className={`menu-button ${
+              selectedButton === "content" ? "active" : ""
+            }`}
+            onClick={() => handleButtonClick("content")}
+          >
+            Content
+          </button>
+          <button
+            className={`menu-button ${
+              selectedButton === "video" ? "active" : ""
+            }`}
+            onClick={() => handleButtonClick("video")}
+          >
+            Video
+          </button>
+          <button
+            className={`menu-button ${
+              selectedButton === "simulator" ? "active" : ""
+            }`}
+            onClick={() => handleButtonClick("simulator")}
+          >
+            Simulator
+          </button>
+          <button
+            className={`menu-button ${
+              selectedButton === "quiz" ? "active" : ""
+            }`}
+            onClick={() => handleButtonClick("quiz")}
+          >
+            Quiz
+          </button>
+          <button
+            className={`menu-button ${
+              selectedButton === "test" ? "active" : ""
+            }`}
+            onClick={() => handleButtonClick("test")}
+          >
+            Test
+          </button>
         </div>
 
-        {/* Right container with subcontent */}
         <div className="content-display">
-          {error && <p className="error-message">{error}</p>}
-          {sectionData ? (
-            <div className="section-content">
-              <h2>{sectionData.title}</h2>
-              <p>{sectionData.description}</p>
-              {/* Display more specific subcontent as needed */}
-            </div>
-          ) : (
+          {loading ? (
             <p>Loading content...</p>
+          ) : error ? (
+            <p className="error-message">{error}</p>
+          ) : (
+            sectionData && (
+              <div className="section-content">
+                {selectedButton === "content" &&
+                  (sectionData.content ? (
+                    <iframe
+                      src={getEmbedUrl(sectionData.content)}
+                      title="Content Frame"
+                      width="100%"
+                      height="500px"
+                    />
+                  ) : (
+                    <p>Content not available</p>
+                  ))}
+                {selectedButton === "video" &&
+                  (sectionData.tutorial_video ? (
+                    <iframe
+                      src={getEmbedUrl(sectionData.tutorial_video)}
+                      title="Video Frame"
+                      width="100%"
+                      height="500px"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <p>Video not available</p>
+                  ))}
+                {selectedButton === "simulator" &&
+                  (sectionData.editor ? (
+                    <iframe
+                      src={getEmbedUrl(sectionData.editor)}
+                      title="Simulator Frame"
+                      width="100%"
+                      height="500px"
+                    />
+                  ) : (
+                    <p>Simulator not available</p>
+                  ))}
+                {selectedButton === "quiz" &&
+                  (sectionData.quiz ? (
+                    <iframe
+                      src={getEmbedUrl(sectionData.quiz)}
+                      title="Quiz Frame"
+                      width="100%"
+                      height="500px"
+                    />
+                  ) : (
+                    <p>Quiz not available</p>
+                  ))}
+                {selectedButton === "test" &&
+                  (sectionData.test ? (
+                    <iframe
+                      src={getEmbedUrl(sectionData.test)}
+                      title="Test Frame"
+                      width="100%"
+                      height="500px"
+                    />
+                  ) : (
+                    <p>Test not available</p>
+                  ))}
+              </div>
+            )
           )}
         </div>
       </div>
     </div>
   );
+};
+
+// PropTypes for validation
+Learning.propTypes = {
+  subject: PropTypes.string,
+  standard: PropTypes.string,
 };
 
 export default Learning;

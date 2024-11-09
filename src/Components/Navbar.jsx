@@ -7,6 +7,7 @@ import BellButton from "../UIcomponents/bell";
 import "./navbar.css";
 import Learning from "../learning";
 import { Link } from "react-router-dom";
+import { fetchStudentDashboard, logout } from "../apiservice"; // Import the service
 
 const Navbar = () => {
   const [data, setData] = useState(null);
@@ -26,23 +27,12 @@ const Navbar = () => {
           // Redirect to login page if not authenticated
           navigate("/login");
         } else {
-          const response = await fetch(
-            `http://192.168.1.9:8000/student_dashboard/${username}/`,
-            {
-              method: "GET",
-              headers: {
-                accept: "application/json",
-                Authorization: "Basic c3R1ZGVudDE6cGFzc3dvcmQxMjM0", // Use your basic auth credentials
-              },
-            }
-          );
-
-          if (response.ok) {
-            const data = await response.json();
-            setData(data);
+          const result = await fetchStudentDashboard(username); // Use the new fetch function
+          if (result.success) {
+            setData(result.data); // Set data if the fetch is successful
           } else {
-            setError("Error fetching data");
-            console.error("Error fetching dashboard data:", response.status);
+            setError(result.error); // Set error if something goes wrong
+            console.error("Error fetching dashboard data:", result.error);
           }
         }
       } catch (err) {
@@ -66,28 +56,14 @@ const Navbar = () => {
     return <div>{error}</div>;
   }
 
-  // Function to handle logout
+  // Function to handle logout using apiService
   const handleLogout = async () => {
-    try {
-      const response = await fetch("http://192.168.1.12:8000/logout/", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          Authorization: "Basic c3R1ZGVudDE6cGFzc3dvcmQxMjM0", // Use basic auth credentials
-        },
-        credentials: "include",
-      });
+    const result = await logout(); // Use the logout function from apiService.js
 
-      if (response.ok) {
-        localStorage.removeItem("token"); // Clear token from localStorage
-        localStorage.removeItem("isAuthenticated"); // Clear authentication state
-        navigate("/"); // Redirect to login page on successful logout
-      } else {
-        throw new Error("Logout failed");
-      }
-    } catch (err) {
-      console.error("Logout failed:", err);
-      setError("Logout failed. Please try again.");
+    if (result.success) {
+      navigate("/LoginPage"); // Redirect to login page on successful logout
+    } else {
+      setError(result.error); // Show error message if logout fails
     }
   };
 
