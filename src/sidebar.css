@@ -14,11 +14,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  transition: width 0.3s;
+  transition: width 0.4s ease-in-out;
   position: relative;
   z-index: 1;
+  color: white;
+}
+
+.maindash {
+  display: flex;
+  gap: 20px;
 }
 
 /* Collapsed Sidebar */
@@ -28,103 +33,91 @@
 
 /* Sidebar Profile Section */
 .sidebar-profile {
-  overflow: hidden;
-  margin-bottom: 20px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  transition: width 0.3s ease, height 0.3s ease;
+  margin-bottom: 20px;
+  width: 100%;
+  transition: all 0.4s ease;
 }
 
-/* Profile Image */
 .profile-image {
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  transition: width 0.3s ease, height 0.3s ease;
+  transition: all 0.4s ease;
 }
 
-/* Adjust profile picture size when sidebar is collapsed */
 .sidebar.collapsed .profile-image {
   width: 40px;
   height: 40px;
+  transform: translateX(0px);
 }
 
-/* Sidebar Logo */
-.sidebar-logo {
-  margin-bottom: 20px;
+.profile-info {
+  margin-left: 10px;
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  white-space: nowrap;
 }
 
-.brand-logo {
-  width: 100%;
-  height: auto;
-  max-width: 120px;
-  border-radius: 10px;
-  transition: width 0.3s;
+.sidebar.collapsed .profile-info {
+  opacity: 0;
+  transform: translateX(-20px);
 }
 
-.sidebar.collapsed .brand-logo {
-  max-width: 40px;
-}
-
-/* Button Panel in Sidebar */
-.button-panel .btn {
-  width: 100%;
+/* Sidebar Content Styling */
+.sidebar-content .sidebar-item {
   display: flex;
   align-items: center;
-  padding: 10px 15px;
-  margin-bottom: 5px;
-  font-size: 0.9rem;
-  border-radius: 5px;
+  padding: 10px 0;
+  color: white;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  color: #fff; /* Set button text color to white */
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, transform 0.4s ease;
+  position: relative;
 }
 
-.btn-secondary {
-  background-color: #7f6af7;
-  color: #fff;
-  border: none;
+.sidebar-content .sidebar-item:hover {
+  transform: scale(1.05);
 }
 
-.btn-outline-secondary {
-  color: #fff;
-  border: 1px solid #7f6af7;
-  background-color: transparent;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #7f6af7;
-  color: #fff;
-}
-
-.button-icon {
+.sidebar-icon {
   font-size: 1.2rem;
   margin-right: 10px;
-  color: #fff; /* Set icon color to white */
+  color: white;
+  transition: transform 0.4s ease, color 0.4s ease;
 }
 
-.sidebar.collapsed .button-icon {
-  margin-right: 0;
+.sidebar.collapsed .sidebar-icon {
+  margin-right: 18px;
+  color: white;
+  transform: scale(0.9) translateX(5px);
+  transition: transform 0.4s ease;
 }
 
-.button-text {
-  transition: opacity 0.3s;
+.sidebar-text {
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  white-space: nowrap; /* Prevents multiple shifts for long text */
 }
 
-.sidebar.collapsed .button-text {
-  display: none;
+.sidebar.collapsed .sidebar-text {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 /* Logout Section Styling */
 .logout-section {
   margin-top: auto;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  transition: all 0.4s ease;
 }
 
 .btn-logout {
-  width: 100%;
-  color: #fff;
+  color: white;
   background-color: #dc3545;
   padding: 10px;
   font-size: 0.9rem;
@@ -132,14 +125,18 @@
   text-align: center;
   cursor: pointer;
   border: none;
+  width: 100%;
+  transition: all 0.4s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s;
 }
 
-.btn-logout:hover {
-  background-color: #c82333;
+.sidebar.collapsed .btn-logout {
+  width: 40px;
+  justify-content: center;
+  padding: 10px 0;
+  font-size: 1rem;
 }
 
 /* Content Panel Styling */
@@ -152,42 +149,37 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
   z-index: 2;
   position: relative;
-  margin-left: -10px; /* Overlay over the sidebar */
+  margin-left: -10px;
   overflow: hidden;
 }
 
-/* Subject Card Styling */
-.subject-card {
-  background-color: #f7f7f7;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Cards styling for grid layout */
+.subject-cards-container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  position: relative;
+  flex-wrap: wrap;
+  gap: 30px;
+  flex-direction: row;
 }
 
-/* Subject Image */
-.subject-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-  margin-right: 15px;
+@media (max-width: 768px) {
+  .subject-cards-container {
+    flex-direction: column;
+  }
 }
 
-/* Subject Button */
-.subject-card .btn {
-  background-color: #7f6af7;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
+@media (max-width: 576px) {
+  .subject-cards-container {
+    flex-direction: column;
+  }
 }
 
-.subject-card .btn:hover {
-  background-color: #6e5de4;
+@media (max-width: 1024px) {
+  .subject-cards-container {
+    flex-direction: column;
+  }
+}
+
+.subject-cards-container > div {
+  width: calc(25% - 30px);
+  margin-bottom: 30px;
 }

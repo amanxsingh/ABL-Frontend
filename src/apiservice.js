@@ -107,3 +107,30 @@ export const logout = async () => {
     return { success: false, error: "Logout failed. Please try again." };
   }
 };
+
+// Fetch document as Blob
+export const fetchDocument = async (url) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    if (!token) throw new Error("Unauthorized access");
+
+    const response = await apiClient.get(url, {
+      responseType: "blob", // Set response type to blob
+      headers: {
+        Authorization: "Basic c3R1ZGVudDE6cGFzc3dvcmQxMjM0", // Replace with actual token if using JWT
+      },
+    });
+
+    if (response.status !== 200)
+      throw new Error("Failed to fetch the document");
+
+    const fileType = response.headers["content-type"];
+    return { success: true, blob: response.data, fileType };
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to fetch document",
+    };
+  }
+};

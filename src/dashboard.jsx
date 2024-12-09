@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import { Dropdown } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import ProfileForm from "./Components/ProfileSetting";
@@ -7,13 +6,14 @@ import Card from "./UIcomponents/card";
 import { fetchStudentDashboard, logout } from "./apiservice";
 import "./sidebar.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import Profilecard from "./UIcomponents/Profilecard";
+import Loader from "./UIcomponents/loader";
 
 const StudentDashboard = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  // const [showProfileForm, setShowProfileForm] = useState(false);
-  const [activeContent, setActiveContent] = useState("subjects");
+  const [activeContent, setActiveContent] = useState("dashboard");
   const [isCollapsed, setIsCollapsed] = useState(true);
   const navigate = useNavigate();
 
@@ -48,6 +48,12 @@ const StudentDashboard = () => {
 
   const renderContent = () => {
     switch (activeContent) {
+      case "dashboard":
+        return (
+          <div className="maindash">
+            <Profilecard />
+          </div>
+        );
       case "subjects":
         return (
           <div className="subject-cards-container">
@@ -56,6 +62,7 @@ const StudentDashboard = () => {
                 <Link to={`/learning/${data.profile.grade}/${subject.slug}/`}>
                   <Card
                     title={subject.name}
+                    image={subject.image}
                     description={
                       subject.description || "No description available."
                     }
@@ -82,12 +89,16 @@ const StudentDashboard = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <p>
+        <Loader />
+      </p>
+    );
   if (error) return <div>{error}</div>;
 
   return (
     <div className="dashboard">
-      {/* Collapsible Sidebar */}
       <div
         className={`sidebar ${isCollapsed ? "collapsed" : ""}`}
         onMouseEnter={() => setIsCollapsed(false)}
@@ -99,13 +110,19 @@ const StudentDashboard = () => {
             alt="Profile"
             className="profile-image"
           />
+          {!isCollapsed && (
+            <div className="profile-info">
+              <div className="profile-name">{data?.profile?.name}</div>
+              <div className="profile-grade">
+                Class - {data?.profile?.grade}
+              </div>
+            </div>
+          )}
         </div>
-        {!isCollapsed && (
-          <h2 className="welcome-message">Welcome, {data?.profile?.name}</h2>
-        )}
 
-        <div className="button-panel">
+        <div className="sidebar-content">
           {[
+            { label: "Dashboard", key: "dashboard", icon: "bi-house" },
             { label: "Subjects", key: "subjects", icon: "bi-book" },
             { label: "Progress Report", key: "progress", icon: "bi-graph-up" },
             {
@@ -134,32 +151,29 @@ const StudentDashboard = () => {
               icon: "bi-gear",
             },
           ].map((item) => (
-            <button
+            <div
               key={item.key}
-              className={`btn ${
-                activeContent === item.key
-                  ? "btn-secondary"
-                  : "btn-outline-secondary"
+              className={`sidebar-item ${
+                activeContent === item.key ? "active" : ""
               }`}
               onClick={() => setActiveContent(item.key)}
             >
-              <i className={`bi ${item.icon} button-icon`}></i>
+              <i className={`bi ${item.icon} sidebar-icon`}></i>
               {!isCollapsed && (
-                <span className="button-text">{item.label}</span>
+                <span className="sidebar-text">{item.label}</span>
               )}
-            </button>
+            </div>
           ))}
         </div>
 
         <div className="logout-section">
-          <button className="btn-logout" onClick={handleLogout}>
-            <i className="bi bi-box-arrow-right button-icon"></i>
-            {!isCollapsed && <span className="button-text">Logout</span>}
-          </button>
+          <div className="sidebar-item" onClick={handleLogout}>
+            <i className="bi bi-box-arrow-right sidebar-icon"></i>
+            {!isCollapsed && <span className="sidebar-text">Logout</span>}
+          </div>
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="content-panel">{renderContent()}</div>
     </div>
   );
