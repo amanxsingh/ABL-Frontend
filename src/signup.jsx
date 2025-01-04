@@ -50,10 +50,8 @@ const LoginPage = () => {
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     const { username_or_email, user } = formData;
-    const result = await login(username_or_email, user.password);
-
+    const result = await login(username_or_email, formData.user.password);
     setLoading(false);
     if (result.success) {
       setIsAuthenticated(true);

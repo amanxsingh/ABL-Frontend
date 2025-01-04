@@ -21,29 +21,38 @@ const StudentDashboard = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated");
 
   useEffect(() => {
+    // Redirect to login page if not authenticated
+    if (isAuthenticated !== "true") {
+      navigate("/login");
+      return; // Prevent further execution if not authenticated
+    }
+
+    // Fetch dashboard data only if authenticated
     const fetchData = async () => {
-      if (isAuthenticated !== "true") {
-        navigate("/login");
-      } else {
-        try {
-          const result = await fetchStudentDashboard(username);
-          result.success
-            ? setData(result.data)
-            : setError("An error occurred.");
-        } catch {
-          setError("An error occurred while fetching data.");
-        } finally {
-          setLoading(false);
-        }
+      try {
+        const result = await fetchStudentDashboard(username);
+        result.success
+          ? setData(result.data)
+          : setError("An error occurred while fetching dashboard data.");
+      } catch (error) {
+        setError("An error occurred while fetching data.");
+      } finally {
+        setLoading(false);
       }
     };
 
+    // Fetch data only if username is available (user logged in)
     if (username) fetchData();
   }, [username, isAuthenticated, navigate]);
 
   const handleLogout = async () => {
     const result = await logout();
-    result.success ? navigate("/LoginPage") : setError("Logout failed.");
+    if (result.success) {
+      localStorage.clear(); // Clear localStorage on logout
+      navigate("/login"); // Redirect to login page
+    } else {
+      setError("Logout failed.");
+    }
   };
 
   const renderContent = () => {
