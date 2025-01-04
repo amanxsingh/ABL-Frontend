@@ -86,39 +86,79 @@ const StudentDashboard = () => {
       case "dashboard":
         return (
           <div className="maindash">
-            <Profilecard />
+            <Profilecard
+              name={data?.profile?.name}
+              grade={data?.profile?.grade}
+              loginCount={data?.login_count}
+            />
+            <p>Total Subjects: {data?.total_subjects}</p>
           </div>
         );
       case "subjects":
         return (
           <div className="subject-cards-container">
-            {data?.subjects?.map((subject, index) => (
-              <div key={index}>
-                <Link to={`/learning/${data.profile.grade}/${subject.slug}/`}>
-                  <Card
-                    title={subject.name}
-                    image={subject.image}
-                    description={
-                      subject.description || "No description available."
-                    }
-                  />
-                </Link>
-              </div>
-            )) || "No subjects available."}
+            {data?.subjects?.length > 0
+              ? data.subjects.map((subject) => (
+                  <div key={subject.id}>
+                    <Link
+                      to={`/learning/${data.profile.grade}/${subject.slug}/`}
+                    >
+                      <Card
+                        title={subject.name}
+                        image={subject.image}
+                        description={
+                          subject.description || "No description available."
+                        }
+                      />
+                    </Link>
+                  </div>
+                ))
+              : "No subjects available."}
           </div>
         );
-      case "progress":
-        return <div>Progress Report content here...</div>;
-      case "assessment":
-        return <div>Assessment Report content here...</div>;
       case "quizzes":
-        return <div>Quizzes & Assessments content here...</div>;
-      case "projects":
-        return <div>Innovative Projects content here...</div>;
-      case "events":
-        return <div>Upcoming Events content here...</div>;
-      case "profileSetting":
-        return <ProfileForm onClose={() => setActiveContent("subjects")} />;
+        return (
+          <div className="quizzes-container">
+            {data?.quizzes?.length > 0
+              ? data.quizzes.map((quiz) => (
+                  <div key={quiz.id}>
+                    <h3>{quiz.quiz_name}</h3>
+                    <p>Topic: {quiz.topic}</p>
+                    <p>Grade: {quiz.grade}</p>
+                    <p>Number of Questions: {quiz.no_of_questions}</p>
+                    <p>Time: {quiz.time} minutes</p>
+                    <p>Passing Score: {quiz.passing_score_percentage}%</p>
+                  </div>
+                ))
+              : "No quizzes available."}
+          </div>
+        );
+      case "results":
+        return (
+          <div className="results-container">
+            {data?.results?.length > 0
+              ? data.results.map((result) => (
+                  <div key={result.id}>
+                    <p>Quiz ID: {result.quiz}</p>
+                    <p>Score: {result.score}%</p>
+                    <p>
+                      Date Attempted:{" "}
+                      {new Date(result.date_attempted).toLocaleDateString()}
+                    </p>
+                    {result.certificate && (
+                      <a
+                        href={result.certificate}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Download Certificate
+                      </a>
+                    )}
+                  </div>
+                ))
+              : "No results available."}
+          </div>
+        );
       default:
         return <div>Select an option</div>;
     }
