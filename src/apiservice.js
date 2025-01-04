@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://credible-becoming-spider.ngrok-free.app/"; // Match the backend URL from your `curl` request
+const BASE_URL = "https://credible-becoming-spider.ngrok-free.app"; // Match the backend URL from your `curl` request
 
 // Create Axios instance with base URL
 export const apiClient = axios.create({
