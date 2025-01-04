@@ -20,20 +20,47 @@ const StudentDashboard = () => {
   const username = localStorage.getItem("username") || "";
   const isAuthenticated = localStorage.getItem("isAuthenticated");
 
+  // useEffect(() => {
+  //   // Redirect to login page if not authenticated
+  //   if (isAuthenticated !== "true") {
+  //     navigate("/login");
+  //     return; // Prevent further execution if not authenticated
+  //   }
+
+  // Fetch dashboard data only if authenticated
+  //   const fetchData = async () => {
+  //     try {
+  //       const result = await fetchStudentDashboard(username);
+  //       result.success
+  //         ? setData(result.data)
+  //         : setError("An error occurred while fetching dashboard data.");
+  //     } catch (error) {
+  //       setError("An error occurred while fetching data.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   // Fetch data only if username is available (user logged in)
+  //   if (username) fetchData();
+  // }, [username, isAuthenticated, navigate]);
   useEffect(() => {
-    // Redirect to login page if not authenticated
-    if (isAuthenticated !== "true") {
+    const token = localStorage.getItem("authToken");
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+    if (isAuthenticated !== "true" || !token) {
       navigate("/login");
-      return; // Prevent further execution if not authenticated
+      return;
     }
 
-    // Fetch dashboard data only if authenticated
     const fetchData = async () => {
       try {
         const result = await fetchStudentDashboard(username);
-        result.success
-          ? setData(result.data)
-          : setError("An error occurred while fetching dashboard data.");
+        if (result.success) {
+          setData(result.data);
+        } else {
+          setError("An error occurred while fetching dashboard data.");
+        }
       } catch (error) {
         setError("An error occurred while fetching data.");
       } finally {
@@ -41,9 +68,8 @@ const StudentDashboard = () => {
       }
     };
 
-    // Fetch data only if username is available (user logged in)
     if (username) fetchData();
-  }, [username, isAuthenticated, navigate]);
+  }, [username, navigate]);
 
   const handleLogout = async () => {
     const result = await logout();
