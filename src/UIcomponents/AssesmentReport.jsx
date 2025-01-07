@@ -10,8 +10,8 @@ import {
   LineElement,
   ArcElement,
 } from "chart.js";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+// import Calendar from "react-calendar";
+// import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
 
 // Register Chart.js components
@@ -250,7 +250,7 @@ const AssessmentReport = () => {
       </div>
 
       <div className="card-new calendar-card-new">
-        <Calendar
+        {/* <Calendar
           value={selectedDate}
           onClickDay={handleDateClick}
           onActiveStartDateChange={({ activeStartDate }) => {
@@ -262,7 +262,7 @@ const AssessmentReport = () => {
             const endDate = new Date(2025, 2, 31);
             return date < startDate || date > endDate;
           }}
-        />
+        /> */}
       </div>
 
       <div className="card-new placeholder-card-new">
