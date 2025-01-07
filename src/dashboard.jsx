@@ -8,6 +8,9 @@ import "./sidebar.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Profilecard from "./UIcomponents/Profilecard";
 import Loader from "./UIcomponents/loader";
+import Progressreport from "./UIcomponents/Progressreport";
+import AssessmentReport from "./UIcomponents/AssesmentReport";
+import AssignmentSubmission from "./UIcomponents/Assignments";
 
 const StudentDashboard = () => {
   const [data, setData] = useState(null);
@@ -57,6 +60,7 @@ const StudentDashboard = () => {
       try {
         const result = await fetchStudentDashboard(username);
         if (result.success) {
+          console.log(result.data); // Debugging the response
           setData(result.data);
         } else {
           setError("An error occurred while fetching dashboard data.");
@@ -82,6 +86,10 @@ const StudentDashboard = () => {
   };
 
   const renderContent = () => {
+    if (data && data.profile) {
+      console.log("Student Name:", data.profile.name);
+    }
+
     switch (activeContent) {
       case "dashboard":
         return (
@@ -91,7 +99,6 @@ const StudentDashboard = () => {
               grade={data?.profile?.grade}
               loginCount={data?.login_count}
             />
-            <p>Total Subjects: {data?.total_subjects}</p>
           </div>
         );
       case "subjects":
@@ -116,49 +123,40 @@ const StudentDashboard = () => {
               : "No subjects available."}
           </div>
         );
+      case "progress":
+        return (
+          <div>
+            <AssessmentReport />
+          </div>
+        );
+      case "assessment":
+        return (
+          <div>
+            <Progressreport />
+          </div>
+        );
       case "quizzes":
         return (
-          <div className="quizzes-container">
-            {data?.quizzes?.length > 0
-              ? data.quizzes.map((quiz) => (
-                  <div key={quiz.id}>
-                    <h3>{quiz.quiz_name}</h3>
-                    <p>Topic: {quiz.topic}</p>
-                    <p>Grade: {quiz.grade}</p>
-                    <p>Number of Questions: {quiz.no_of_questions}</p>
-                    <p>Time: {quiz.time} minutes</p>
-                    <p>Passing Score: {quiz.passing_score_percentage}%</p>
-                  </div>
-                ))
-              : "No quizzes available."}
+          <div>
+            <iframe
+              src="https://quizizz.com/embed/quiz/66571b0198406433bf45c46c"
+              width="100%"
+              height="660"
+              frameBorder="0"
+              allowFullScreen
+            ></iframe>
           </div>
         );
-      case "results":
+      case "projects":
         return (
-          <div className="results-container">
-            {data?.results?.length > 0
-              ? data.results.map((result) => (
-                  <div key={result.id}>
-                    <p>Quiz ID: {result.quiz}</p>
-                    <p>Score: {result.score}%</p>
-                    <p>
-                      Date Attempted:{" "}
-                      {new Date(result.date_attempted).toLocaleDateString()}
-                    </p>
-                    {result.certificate && (
-                      <a
-                        href={result.certificate}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Download Certificate
-                      </a>
-                    )}
-                  </div>
-                ))
-              : "No results available."}
+          <div>
+            <AssignmentSubmission />
           </div>
         );
+      case "events":
+        return <div>Upcoming Events Will be here...</div>;
+      case "profileSetting":
+        return <ProfileForm onClose={() => setActiveContent("subjects")} />;
       default:
         return <div>Select an option</div>;
     }

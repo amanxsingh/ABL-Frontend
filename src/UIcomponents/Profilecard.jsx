@@ -4,6 +4,9 @@ import { fetchStudentDashboard } from "../apiservice";
 import "./profilecard.css";
 import Social from "./Social";
 import Loader from "./loader";
+import PerformanceChart from "./PerformanceChart"; // Import the new PerformanceChart component
+import Linegraph from "./Linegraph";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const ProfileCard = ({ username }) => {
   const [data, setData] = useState(null);
@@ -56,11 +59,11 @@ const ProfileCard = ({ username }) => {
       <p className="location">Class - {data?.profile?.grade}</p>
       <div className="stats">
         <div className="stat">
-          <p>{data?.courses?.length || 0}</p>
+          <p>{data?.courses?.length || 2}</p>
           <span>Course</span>
         </div>
         <div className="stat">
-          <p>{data?.certifications?.length || 0}</p>
+          <p>{data?.certifications?.length || 1}</p>
           <span>Certification</span>
         </div>
       </div>
@@ -96,39 +99,49 @@ const ActionCards = () => (
     {/* Bottom cards */}
     <div className="action-cards-row">
       <div className="action-card set-target1">
-        <div className="header-con1">
-          <img src="icon: bi-house" alt="Icon" className="icon" />
-          <h4>Set Target 2</h4>
-        </div>
+        <i className="bi bi-bell-fill icon"></i>
+        <h4>Notifications (2)</h4>
+      </div>
+      <div className="header-con1">
+        <ul>
+          <li>New assignments have been posted, check now.</li>
+          <li>Reminder: Parent-teacher meeting scheduled for tomorrow</li>
+        </ul>
       </div>
       <div className="action-card set-target">
+        <i className="bi bi-bullseye icon"></i>
+        <h4>Teachers Comment</h4>
         <div className="header-con">
-          <img src="icon: bi-house" alt="Icon" className="icon" />
-          <h4>Set Target 1</h4>
+          <ul>
+            <li>
+              Your performance is steady, showing a good understanding of the
+              basics.
+            </li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
 );
 
-const LeftContainer = ({ data }) => (
-  <div className="left-container">
-    <h1>
-      <b>Hello, </b>
-      {data?.profile?.name || "Student"}
-    </h1>
-    <h6>Nice to have you back, what an exciting day!</h6>{" "}
-    <h6> Get ready and continue your lessons today.</h6>
-    <h2>Your Performance</h2>
-    <div className="chart-section">
-      {/* Replace with an actual chart later */}
-      <div className="chart-placeholder">Chart Placeholder</div>
+const LeftContainer = ({ data }) => {
+  return (
+    <div className="left-container">
+      <h1>
+        <b>Hello, </b>
+        {data?.profile?.name || "Student"}
+      </h1>
+      <h6>Nice to have you back, what an exciting day!</h6>
+      <h6>Get ready and continue your lessons today.</h6>
+      <h2>Your Performance</h2>
+      {/* Use the PerformanceChart component here */}
+      <PerformanceChart />
+      <div className="bottom-card">
+        <Social />
+      </div>
     </div>
-    <div className="bottom-card">
-      <Social />
-    </div>
-  </div>
-);
+  );
+};
 
 LeftContainer.propTypes = {
   data: PropTypes.shape({
@@ -147,7 +160,8 @@ const LearningActivity = () => (
     <h3>Learning Activity</h3>
     <div className="chart">
       {/* Placeholder for chart */}
-      <p>Chart Placeholder</p>
+      <Linegraph />{" "}
+      {/* Assuming AssessmentReport is the component rendering the Line graph */}
     </div>
   </div>
 );

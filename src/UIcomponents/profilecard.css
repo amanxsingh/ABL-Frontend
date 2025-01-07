@@ -26,26 +26,26 @@ body {
 
 @media (max-width: 768px) {
   .dashboard-container {
-    flex-direction: column; /* Stack containers vertically */
+    flex-direction: column;
     height: auto;
   }
 }
 
 /* Left Container */
 .left-container {
-  flex-basis: 100%; /* Takes 40% of the width */
+  flex-basis: 100%;
   background-color: var(--bg-card);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px;
-  margin-top: 20px;
+  padding: 10px;
+  margin-top: 10px;
   border-radius: 20px;
 }
 
 @media (max-width: 768px) {
   .left-container {
-    width: 100%; /* Full width for tablets */
+    width: 100%;
     padding: 15px;
     margin-top: 15px;
   }
@@ -60,7 +60,7 @@ body {
 
 /* Right Container */
 .right-container {
-  flex-basis: 100%; /* Takes 60% of the width */
+  flex-basis: 100%;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -71,7 +71,7 @@ body {
 
 @media (max-width: 768px) {
   .right-container {
-    width: 100%; /* Full width for smaller screens */
+    width: 100%;
     padding: 15px;
     border-radius: 15px;
   }
@@ -116,7 +116,7 @@ body {
   border-radius: 20px;
   padding: 15px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  min-height: 200px;
+  min-height: 228px;
   flex-wrap: wrap;
 }
 
@@ -193,8 +193,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 60%; /* Make sure it fills the parent width */
-  justify-content: space-between; /* Spread cards across the row */
+  width: 60%;
+  justify-content: space-between;
 }
 
 .action-card {
@@ -215,8 +215,8 @@ body {
 @media (max-width: 576px) {
   .action-card {
     padding: 10px;
-    width: 165%; /* Full width for smaller screens */
-    justify-content: space-between; /* Spread cards across the row */
+    width: 165%;
+    justify-content: space-between;
   }
 }
 
@@ -225,7 +225,7 @@ body {
   background-color: var(--color-consultation);
   min-height: 160px;
   flex-wrap: wrap;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .set-target1 {
@@ -233,6 +233,22 @@ body {
   background-color: var(--color-target);
   min-height: 160px;
   flex-wrap: wrap;
+  gap: 10 px;
+}
+
+.header-con1 {
+  margin-top: -100px;
+}
+/* Icon and Text Alignment */
+.header-con1 .icon-text {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-con1 .icon-text i {
+  font-size: 18px;
+  color: var(--color-text);
 }
 
 /* Learning Activity Section */
@@ -263,7 +279,7 @@ body {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .action-cards-row {
-    flex-wrap: wrap; /* Wrap action cards for smaller screens */
+    flex-wrap: wrap;
     gap: 10px;
   }
 }

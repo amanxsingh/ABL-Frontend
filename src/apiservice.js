@@ -11,15 +11,26 @@ export const apiClient = axios.create({
 });
 
 // Attach token dynamically to every request
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("authToken");
-  console.log("Token in interceptor:", token); // Debugging log
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  } else {
-    console.error("No token found in localStorage");
-  }
-  console.log("Request Headers:", config.headers); // Debugging log for headers
+// apiClient.interceptors.request.use((config) => {
+//   const token = localStorage.getItem("authToken");
+//   console.log("Token in interceptor:", token); // Debugging log
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   } else {
+//     console.error("No token found in localStorage");
+//   }
+//   console.log("Request Headers:", config.headers); // Debugging log for headers
+//   return config;
+// });
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  const csrfToken = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("csrftoken="));
+
+  if (token) config.headers["Authorization"] = `Bearer ${token}`;
+  if (csrfToken) config.headers["X-CSRFTOKEN"] = csrfToken.split("=")[1];
+
   return config;
 });
 
