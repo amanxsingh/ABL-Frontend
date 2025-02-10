@@ -7,6 +7,8 @@ import Dashboard from "./dashboard";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Learning from "./learning";
+import SchoolDashboard from "./SchoolDashboard";
+
 
 // Create a context to hold the authentication state
 export const AuthContext = createContext();
@@ -23,12 +25,16 @@ PrivateRoute.propTypes = {
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState("");
 
-  // Check if user is already logged in (restore auth state from localStorage)
+  // Restore auth state from localStorage
   useEffect(() => {
     const storedAuthStatus = localStorage.getItem("isAuthenticated");
+    const storedRole = localStorage.getItem("role");
+
     if (storedAuthStatus === "true") {
       setIsAuthenticated(true);
+      setRole(storedRole || ""); // Set role to empty string if not found
     }
   }, []);
 
@@ -37,14 +43,25 @@ function App() {
       <Routes>
         <Route path="/" element={<Signup />} />
         <Route path="/login" element={<Signup />} />
+        {/* Redirect users to the correct dashboard based on their role */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+              {role === "school" ? <Navigate to="/school_dashboard" /> : <Dashboard />}
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="/school_dashboard"
+          element={
+            <PrivateRoute>
+              {role === "student" ? <Navigate to="/dashboard" /> : <SchoolDashboard />}
+            </PrivateRoute>
+          }
+        />
+        
         <Route path="*" element={<Navigate to="/" />} />
         <Route
           path="/learning/:standard/:subject/"
@@ -60,3 +77,4 @@ function App() {
 }
 
 export default App;
+
