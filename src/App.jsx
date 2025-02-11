@@ -39,7 +39,7 @@ function App() {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, role, setRole }}>
       <Routes>
         <Route path="/" element={<Signup />} />
         <Route path="/login" element={<Signup />} />
@@ -52,6 +52,8 @@ function App() {
             </PrivateRoute>
           }
         />
+
+       
 
         <Route
           path="/school_dashboard"

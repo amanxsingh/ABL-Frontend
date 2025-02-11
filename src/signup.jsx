@@ -25,7 +25,7 @@ const LoginPage = () => {
   const [responseData, setResponseData] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated, setRole } = useContext(AuthContext); // Get setRole from context
 
   // Handle input changes for login and sign-up forms
   const handleChange = (e) => {
@@ -47,37 +47,49 @@ const LoginPage = () => {
   };
 
   // Handle login form submission
+ 
+
   const handleSignInSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     const { username_or_email, user } = formData;
-    const result = await login(username_or_email, formData.user.password);
+    const result = await login(username_or_email, user.password);
     setLoading(false);
+    
     if (result.success) {
       setIsAuthenticated(true);
+      setRole(result.data.role); // ✅ Update role here
       setError(null);
       navigate("/dashboard");
     } else {
       setError(result.error);
     }
   };
+  
 
   // Handle sign-up form submission
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    const result = await register(formData);
+  
+    // Ensure the user object is properly formatted
+    const formattedUserData = {
+      ...formData,
+      user: { ...formData.user }, // This ensures the user object is properly structured
+    };
+  
+    const result = await register(formattedUserData);
     setLoading(false);
-
+  
     if (result.success) {
-      setResponseData(result.data);
-      setIsRegistered(true);
       setError(null);
+      navigate("/login"); // Redirect to login after successful signup
     } else {
       setError(result.error);
     }
   };
+  
+
 
   useEffect(() => {
     document.body.classList.add("login-page");

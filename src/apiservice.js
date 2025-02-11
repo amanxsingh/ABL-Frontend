@@ -31,10 +31,7 @@ const handleError = (error, defaultMessage) => {
 // **Login Function**
 export const login = async (username_or_email, password) => {
   try {
-    const response = await axios.post(`${BASE_URL}account/login/`, {
-      username_or_email,
-      password,
-    });
+    const response = await apiClient.post("/account/login/", { username_or_email, password })
 
     const { token, username, dashboard_url, role } = response.data;
 
@@ -56,10 +53,10 @@ export const login = async (username_or_email, password) => {
 // **Fetch Student Dashboard**
 export const fetchStudentDashboard = async (username) => {
   try {
-    const token = localStorage.getItem("authToken");
-    if (!token) throw new Error("No auth token found. User must log in again.");
+    // const token = localStorage.getItem("authToken");
+    // if (!token) throw new Error("No auth token found. User must log in again.");
 
-    console.log("Fetching Student Dashboard with Token:", token); // ✅ Debugging log
+    // console.log("Fetching Student Dashboard with Token:", token); // ✅ Debugging log
 
     const response = await apiClient.get(`/student_dashboard/${username}/`);
     return { success: true, data: response.data };
@@ -72,10 +69,10 @@ export const fetchStudentDashboard = async (username) => {
 // **Fetch School Dashboard**
 export const fetchSchoolDashboard = async (username) => {
   try {
-    const token = localStorage.getItem("authToken");
-    if (!token) throw new Error("No auth token found. User must log in again.");
+    // const token = localStorage.getItem("authToken");
+    // if (!token) throw new Error("No auth token found. User must log in again.");
 
-    console.log("Fetching School Dashboard with Token:", token);
+    // console.log("Fetching School Dashboard with Token:", token);
 
     // ✅ Corrected API call, baseURL is automatically prepended
     const response = await apiClient.get(`/school_dashboard/${username}/`);
@@ -96,7 +93,7 @@ export const register = async (userData) => {
     const response = await apiClient.post("/account/register/", userData);
     return { success: true, data: response.data };
   } catch (error) {
-    return { success: false, error: handleError(error, "Registration failed.") };
+    return { success: false, error: error.response?.data?.message || "Registration failed" };
   }
 };
 
@@ -124,8 +121,9 @@ export const fetchStudentProfile = async (username) => {
 // **Logout Function**
 export const logout = async () => {
   try {
-    await apiClient.post("/logout/");
+    await apiClient.post("/account/logout/");
     localStorage.clear();
+    navigate("/login");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Logout failed. Please try again." };
