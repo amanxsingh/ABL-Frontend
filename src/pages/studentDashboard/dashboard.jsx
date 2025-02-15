@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import ProfileForm from "./Components/ProfileSetting";
-import Card from "./UIcomponents/card";
-import { fetchStudentDashboard, logout } from "./apiservice";
-import "./sidebar.css";
+import ProfileForm from "../../Components/ProfileSetting";
+import Card from "../../UIcomponents/dashboard/card";
+import { fetchStudentDashboard, logout } from "../../api/apiservice";
+import "../../utils/css/sidebar.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import Profilecard from "./UIcomponents/Profilecard";
-import Loader from "./UIcomponents/loader";
-import Progressreport from "./UIcomponents/Progressreport";
-import AssessmentReport from "./UIcomponents/AssesmentReport";
-import AssignmentSubmission from "./UIcomponents/Assignments";
+import Profilecard from "../../UIcomponents/dashboard/Profilecard";
+import Loader from "../../UIcomponents/dashboard/loader";
+import Progressreport from "../../UIcomponents/dashboard/Progressreport";
+import AssessmentReport from "../../UIcomponents/dashboard/AssesmentReport";
+import AssignmentSubmission from "../../UIcomponents/dashboard/Assignments";
 
 const StudentDashboard = () => {
   const [data, setData] = useState(null);

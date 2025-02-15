@@ -1,9 +1,9 @@
 // LoginPage.js
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "./App";
+import { AuthContext } from "../../App";
 import "./signup.css";
-import { login, register } from "./apiservice";
+import { login, register } from "../../api/apiservice";
 
 const LoginPage = () => {
   const [isActive, setIsActive] = useState(false);
@@ -68,27 +68,43 @@ const LoginPage = () => {
   
 
   // Handle sign-up form submission
+  // const handleSignUpSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  
+  //   // Ensure the user object is properly formatted
+  //   const formattedUserData = {
+  //     ...formData,
+  //     user: { ...formData.user }, // This ensures the user object is properly structured
+  //   };
+  
+  //   const result = await register(formattedUserData);
+  //   setLoading(false);
+  
+  //   if (result.success) {
+  //     setError(null);
+  //     navigate("/login"); // Redirect to login after successful signup
+  //   } else {
+  //     setError(result.error);
+  //   }
+  // };
+  
+
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
-    // Ensure the user object is properly formatted
-    const formattedUserData = {
-      ...formData,
-      user: { ...formData.user }, // This ensures the user object is properly structured
-    };
-  
-    const result = await register(formattedUserData);
+
+    const result = await register(formData);
     setLoading(false);
-  
+
     if (result.success) {
+      setResponseData(result.data);
+      setIsRegistered(true);
       setError(null);
-      navigate("/login"); // Redirect to login after successful signup
     } else {
       setError(result.error);
     }
   };
-  
 
 
   useEffect(() => {

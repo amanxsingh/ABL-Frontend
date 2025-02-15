@@ -8,9 +8,9 @@ import {
   faQuestionCircle,
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
-import { curriculum } from "./apiservice";
-import "./learn.css";
-import Loader from "./UIcomponents/loader";
+import { curriculum } from "./api/apiservice";
+import "./utils/css/learn.css";
+import Loader from "./UIcomponents/dashboard/loader";
 import DocumentViewer from "./hint";
 import Popup from "./popup";
 

@@ -50,14 +50,11 @@ export const login = async (username_or_email, password) => {
   }
 };
 
+
+
 // **Fetch Student Dashboard**
 export const fetchStudentDashboard = async (username) => {
   try {
-    // const token = localStorage.getItem("authToken");
-    // if (!token) throw new Error("No auth token found. User must log in again.");
-
-    // console.log("Fetching Student Dashboard with Token:", token); // ✅ Debugging log
-
     const response = await apiClient.get(`/student_dashboard/${username}/`);
     return { success: true, data: response.data };
   } catch (error) {
@@ -69,15 +66,11 @@ export const fetchStudentDashboard = async (username) => {
 // **Fetch School Dashboard**
 export const fetchSchoolDashboard = async (username) => {
   try {
-    // const token = localStorage.getItem("authToken");
-    // if (!token) throw new Error("No auth token found. User must log in again.");
-
-    // console.log("Fetching School Dashboard with Token:", token);
 
     // ✅ Corrected API call, baseURL is automatically prepended
     const response = await apiClient.get(`/school_dashboard/${username}/`);
-    
-    console.log(response.data); 
+
+    console.log(response.data);
     return { success: true, data: response.data };
 
   } catch (error) {
@@ -111,7 +104,7 @@ export const curriculum = async (subject, standard) => {
 // **Fetch Student Profile**
 export const fetchStudentProfile = async (username) => {
   try {
-    const response = await apiClient.get(`/student-profile/${username}/`);
+    const response = await apiClient.get(`/student_dashboard/student-profile/${username}/`);
     return { success: true, data: response.data };
   } catch (error) {
     return { success: false, error: handleError(error, "Error fetching profile data.") };
@@ -129,6 +122,51 @@ export const logout = async () => {
     return { success: false, error: "Logout failed. Please try again." };
   }
 };
+
+
+export const updateStudentProfile = async (username, profileData) => {
+  try {
+    const response = await apiClient.put(`/student_dashboard/student-profile/${username}/`, profileData);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: handleError(error, "Failed to update profile.") };
+  }
+};
+
+// **Patch Student Profile (PATCH)**
+export const patchStudentProfile = async (username, profileData) => {
+  try {
+    const response = await apiClient.patch(`/student_dashboard/student-profile/${username}/`, profileData);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: handleError(error, "Failed to update profile.") };
+  }
+};
+
+// **Update Student Avatar**
+export const updateStudentAvatar = async (username, avatarFile) => {
+  try {
+    const formData = new FormData();
+    formData.append("avatar", avatarFile);
+
+    const response = await apiClient.post(
+      `/student_dashboard/student-profile/${username}/update-avatar/`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: handleError(error, "Failed to update avatar.") };
+  }
+};
+
+
+
 
 // **Fetch Document as Blob**
 export const fetchDocument = async (url) => {
