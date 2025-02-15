@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { fetchDocument } from "./apiservice"; // Import the fetchDocument function
+import { fetchDocument } from "./api/apiservice"; // Import the fetchDocument function
 
 const DocumentViewer = ({ url }) => {
   const [fileBlob, setFileBlob] = useState(null);

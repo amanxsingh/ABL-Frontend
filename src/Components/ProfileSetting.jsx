@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { fetchStudentProfile } from "../apiservice"; // Import the new API function
+import { fetchStudentProfile, patchStudentProfile, updateStudentAvatar } from "../api/apiservice";
 
 const ProfileForm = ({ onClose }) => {
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
   const username = localStorage.getItem("username");
 
   useEffect(() => {
@@ -28,17 +31,48 @@ const ProfileForm = ({ onClose }) => {
     loadProfileData();
   }, [username]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const handleChange = (e) => {
+    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+  };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  const handleSave = async () => {
+    setIsSaving(true);
+    const result = await patchStudentProfile(username, {
+      name: profileData.name,
+      grade: profileData.grade,
+      section: profileData.section,
+      school: profileData.school,
+    });
 
-  if (!profileData) {
-    return <div>No profile data found.</div>;
-  }
+    if (result.success) {
+      alert("Profile updated successfully!");
+    } else {
+      alert(result.error);
+    }
+    setIsSaving(false);
+  };
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const result = await updateStudentAvatar(username, file);
+
+    if (result.success) {
+      alert("Avatar updated successfully!");
+      setProfileData({ ...profileData, profile_pic: result.data.profile_pic });
+    } else {
+      alert(result.error);
+    }
+
+    setIsUploading(false);
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!profileData) return <div>No profile data found.</div>;
 
   return (
     <div className="profile-form">
@@ -55,6 +89,7 @@ const ProfileForm = ({ onClose }) => {
             readOnly
           />
         </div>
+        
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
@@ -74,8 +109,8 @@ const ProfileForm = ({ onClose }) => {
             id="name"
             name="name"
             value={profileData.name || ""}
+            onChange={handleChange}
             className="form-control"
-            readOnly
           />
         </div>
 
@@ -86,8 +121,8 @@ const ProfileForm = ({ onClose }) => {
             id="grade"
             name="grade"
             value={profileData.grade || ""}
+            onChange={handleChange}
             className="form-control"
-            readOnly
           />
         </div>
 
@@ -98,8 +133,8 @@ const ProfileForm = ({ onClose }) => {
             id="section"
             name="section"
             value={profileData.section || ""}
+            onChange={handleChange}
             className="form-control"
-            readOnly
           />
         </div>
 
@@ -110,8 +145,8 @@ const ProfileForm = ({ onClose }) => {
             id="school"
             name="school"
             value={profileData.school || ""}
+            onChange={handleChange}
             className="form-control"
-            readOnly
           />
         </div>
 
@@ -127,11 +162,25 @@ const ProfileForm = ({ onClose }) => {
                 objectFit: "cover",
                 marginBottom: "10px",
                 marginTop: "10px",
+                borderRadius: "50%",
               }}
             />
           ) : (
             <p>No profile picture available</p>
           )}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="avatar">Update Profile Picture</label>
+          <input
+            type="file"
+            id="avatar"
+            accept="image/*"
+            className="form-control"
+            onChange={handleAvatarChange}
+            disabled={isUploading}
+          />
+          {isUploading && <p>Uploading...</p>}
         </div>
 
         <div
@@ -145,9 +194,10 @@ const ProfileForm = ({ onClose }) => {
           <button
             type="button"
             className="btn btn-primary"
-            onClick={() => console.log("Save clicked")}
+            onClick={handleSave}
+            disabled={isSaving}
           >
-            Save
+            {isSaving ? "Saving..." : "Save"}
           </button>
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Close

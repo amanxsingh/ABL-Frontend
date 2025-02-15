@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { fetchStudentDashboard } from "../apiservice";
+import { fetchStudentDashboard } from "../../api/apiservice";
 import "./profilecard.css";
 import Social from "./Social";
 import Loader from "./loader";

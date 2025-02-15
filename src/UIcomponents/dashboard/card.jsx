@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import "../UIcomponents/cards.css";
+import "../../utils/css/cards.css";
 
 const Card = ({ title, image }) => {
   return (
