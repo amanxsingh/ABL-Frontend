@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { fetchStudentProfile, patchStudentProfile, updateStudentAvatar } from "../api/apiservice";
+import { fetchStudentProfile, updateStudentAvatar, patchStudentProfile } from "../api/apiservice";
 
 const ProfileForm = ({ onClose }) => {
   const [profileData, setProfileData] = useState(null);
@@ -37,19 +37,29 @@ const ProfileForm = ({ onClose }) => {
 
   const handleSave = async () => {
     setIsSaving(true);
-    const result = await patchStudentProfile(username, {
-      name: profileData.name,
-      grade: profileData.grade,
-      section: profileData.section,
-      school: profileData.school,
-    });
+    try {
+      const profilePayload = {
+        name: profileData.name,
+        grade: profileData.grade,
+        section: profileData.section,
+        school: profileData.school,
+      };
 
-    if (result.success) {
-      alert("Profile updated successfully!");
-    } else {
-      alert(result.error);
+      console.log("Profile Payload:", profilePayload);
+
+      const result = await patchStudentProfile(username, profilePayload);
+
+      if (result.success) {
+        alert("Profile updated successfully!");
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error("Error updating student profile:", error);
+      alert("An error occurred while updating the profile.");
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
   };
 
   const handleAvatarChange = async (e) => {
@@ -58,16 +68,21 @@ const ProfileForm = ({ onClose }) => {
 
     setIsUploading(true);
 
-    const result = await updateStudentAvatar(username, file);
+    try {
+      const result = await updateStudentAvatar(username, file);
 
-    if (result.success) {
-      alert("Avatar updated successfully!");
-      setProfileData({ ...profileData, profile_pic: result.data.profile_pic });
-    } else {
-      alert(result.error);
+      if (result.success) {
+        alert("Avatar updated successfully!");
+        setProfileData({ ...profileData, profile_pic: result.data.profile_pic });
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+      alert("An error occurred while updating the avatar.");
+    } finally {
+      setIsUploading(false);
     }
-
-    setIsUploading(false);
   };
 
   if (loading) return <div>Loading...</div>;

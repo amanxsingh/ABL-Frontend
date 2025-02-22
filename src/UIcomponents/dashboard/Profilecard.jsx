@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { fetchStudentDashboard } from "../../api/apiservice";
+import { fetchStudentDashboard, fetchStudentNotifications } from "../../api/apiservice";
 import "./profilecard.css";
 import Social from "./Social";
 import Loader from "./loader";
@@ -77,7 +77,26 @@ ProfileCard.propTypes = {
 
 const ActionCards = () => (
   <div className="action-cards">
-    {/* Top card */}
+  {/* Top card */}
+    {/* <div className="action-card consultation">
+      <div className="header-con">
+        <img
+          src="https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Icon"
+          className="img1"
+        />
+        <div className="header-con3">
+          <h4>
+            <b>CONSULTATION</b>
+          </h4>
+          <h6>Points</h6>
+          <button className="btn1">Hello1</button>
+          <button className="btn2">Hello</button>
+        </div>
+      </div> 
+    </div> */}
+
+  {/* Top card */}
     {/* <div className="action-card consultation">
       <div className="header-con">
         <img
@@ -126,7 +145,7 @@ const ActionCards = () => (
 
 const LeftContainer = ({ data }) => {
   return (
-    <div className="left-container">
+    <div clame="left-container">
       <h1>
         <b>Hello, </b>
         {data?.profile?.name || "Student"}

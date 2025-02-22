@@ -11,6 +11,7 @@ import Loader from "../../UIcomponents/dashboard/loader";
 import Progressreport from "../../UIcomponents/dashboard/Progressreport";
 import AssessmentReport from "../../UIcomponents/dashboard/AssesmentReport";
 import AssignmentSubmission from "../../UIcomponents/dashboard/Assignments";
+import QuizComponent from "../../UIcomponents/dashboard/QuizComponent";
 
 const StudentDashboard = () => {
   const [data, setData] = useState(null);
@@ -93,17 +94,27 @@ const StudentDashboard = () => {
       case "assessment":
         return <Progressreport />;
       case "quizzes":
-        return (
-          <div>
-            <iframe
-              src="https://quizizz.com/embed/quiz/66571b0198406433bf45c46c"
-              width="100%"
-              height="660"
-              frameBorder="0"
-              allowFullScreen
-            ></iframe>
-          </div>
-        );
+        return <QuizComponent />;
+//         return (
+//           <div className="quiz-cards-container">
+//   {data?.quizzes?.length > 0 ? (
+//     data.quizzes.map((quiz) => (
+//       <div key={quiz.id}>
+//         <Link to={`/quiz/${data.profile.grade}/${quiz.id}/`}>
+//           <Card
+//             title={quiz.quiz_name}
+//             image="https://via.placeholder.com/150" // Placeholder image, replace if needed
+//             description={`Topic: ${quiz.topic} | ${quiz.no_of_questions} Questions | Time: ${quiz.time} mins`}
+//           />
+//         </Link>
+//       </div>
+//     ))
+//   ) : (
+//     "No quizzes available."
+//   )}
+// </div>
+
+//         );
       case "projects":
         return <AssignmentSubmission />;
       case "events":
