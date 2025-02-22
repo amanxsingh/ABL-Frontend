@@ -98,35 +98,34 @@ const ActionCards = () => {
 
   return (
     <div className="action-cards">
-      <div className="action-cards-row">
-        <div className="action-card set-target1">
-          <div className="icon-heading">
-            <i className="bi bi-bell-fill icon"></i>
-            <h4>Notifications ({notifications.length})</h4>
-          </div>
-          <div className="header-con1">
-            <ul>
-              {notifications.length > 0 ? (
-                notifications.map((notification, index) => (
-                  <li key={index}>{notification.message}</li>
-                ))
-              ) : (
-                <li>No new notifications</li>
-              )}
-            </ul>
-          </div>
+      <div className="action-card set-target1">
+        <div className="icon-heading">
+          <i className="bi bi-bell-fill icon"></i>
+          <h4>Notifications ({notifications.length})</h4>
         </div>
-        <div className="action-card set-target">
-          <div className="icon-heading">
-            <i className="bi bi-bullseye icon"></i>
-            <h4>Teachers Comment</h4>
-          </div>
-          <div className="header-con">
-            <ul>
-              <li>Your performance is steady, showing a good understanding of the basics.</li>
-              <li>Keep up the good work and continue to practice.</li>
-            </ul>
-          </div>
+        <div className="header-con1">
+          <ul>
+            {notifications.length > 0 ? (
+              notifications.map((notification, index) => (
+                <li key={index}>{notification.message}</li>
+              ))
+            ) : (
+              <li>No new notifications</li>
+            )}
+          </ul>
+        </div>
+      </div>
+      <div className="action-card set-target">
+        <div className="icon-heading">
+          <i className="bi bi-bullseye icon"></i>
+          <h4>Teachers Comment</h4>
+        </div>
+        <div className="header-con">
+          <ul>
+            <li>Your performance is steady, showing a good understanding of the basics.</li>
+            <li>Keep up the good work and continue to practice.</li>
+            <li>Keep up the good work and continue to practice.</li>
+          </ul>
         </div>
       </div>
     </div>

@@ -12,6 +12,7 @@ import Progressreport from "../../UIcomponents/dashboard/Progressreport";
 import AssessmentReport from "../../UIcomponents/dashboard/AssesmentReport";
 import AssignmentSubmission from "../../UIcomponents/dashboard/Assignments";
 import QuizComponent from "../../UIcomponents/dashboard/QuizComponent";
+import ProfileAndActivity from "../../Components/ProfileAndActivity";
 
 const StudentDashboard = () => {
   const [data, setData] = useState(null);
@@ -120,7 +121,7 @@ const StudentDashboard = () => {
       case "events":
         return <div>Upcoming Events Will be here...</div>;
       case "profileSetting":
-        return <ProfileForm onClose={() => setActiveContent("subjects")} />;
+        return <ProfileAndActivity onClose={() => setActiveContent("subjects")} />;
       default:
         return <div>Select an option</div>;
     }

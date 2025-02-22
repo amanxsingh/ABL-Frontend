@@ -9,12 +9,12 @@
   --color-target: #ed85ff;
 }
 
-body {
+/* body {
   font-family: Arial, sans-serif;
   background-color: var(--bg-light);
   margin: 0;
   padding: 0;
-}
+} */
 
 /* Dashboard Container */
 .dashboard-container {
@@ -148,6 +148,7 @@ body {
   flex: 1;
   max-width: 245px;
   max-height: 350px;
+  height: 350px;
   width: 100%;
 }
 
@@ -194,15 +195,10 @@ body {
   flex-direction: column;
   gap: 20px;
   width: 60%;
+  max-height: 100%;
   justify-content: space-between;
 }
 
-.action-cards-row {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  height: 100%;
-}
 
 .action-card {
   background-color: var(--bg-card);
@@ -210,8 +206,8 @@ body {
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   min-width: fit-content;
-  flex: 1;
-  height: 200px; /* Fixed height for both cards */
+  flex: 1 1 auto;
+  height: 150px; /* Fixed height for both cards */
   overflow: hidden; /* Hide scrollbar */
   position: relative;
 }

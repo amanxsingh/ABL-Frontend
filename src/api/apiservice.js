@@ -127,6 +127,24 @@ export const fetchStudentProfile = async (username) => {
   }
 };
 
+// **Fetch Student Login Activity**
+export const fetchStudentLoginActivity = async () => {
+  try {
+    const response = await apiClient.get(`/student_dashboard/student/login-activity/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching login activity:", error);
+
+    let errorMessage = "Error fetching login activity.";
+    if (error.response?.data) {
+      errorMessage = JSON.stringify(error.response.data);
+    }
+
+    return { success: false, error: errorMessage };
+  }
+};
+
+
 // **Create Student Profile**
 export const createStudentProfile = async (studentData) => {
   try {
@@ -149,16 +167,25 @@ export const updateStudentProfile = async (username, profileData) => {
   }
 };
 
+// **Update Student Password**
 export const updateStudentPassword = async (username, newPassword) => {
   try {
-    const response = await axios.patch(`${API_BASE_URL}/student_dashboard/student-profile/update-password/`, {
+    const response = await apiClient.patch(`/student_dashboard/student-profile/update-password/`, {
       user: { username, password: newPassword },
     });
     return { success: true, data: response.data };
   } catch (error) {
-    return { success: false, error: error.response?.data || "An error occurred" };
+    console.error("Error updating password:", error);
+
+    let errorMessage = "An error occurred";
+    if (error.response?.data) {
+      errorMessage = JSON.stringify(error.response.data); // Convert object to string
+    }
+
+    return { success: false, error: errorMessage };
   }
 };
+
 
 // **Logout Function**
 export const logout = async () => {
