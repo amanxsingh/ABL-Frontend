@@ -61,20 +61,28 @@ export const fetchStudentDashboard = async (username) => {
   }
 };
 
-// **Fetch Student Notifications**
 export const fetchStudentNotifications = async () => {
   try {
-    const response = await apiClient.get(`/student_dashboard/student_notification/`, {
-      headers: {
-        "X-CSRFToken": "9nxKSJAkiblLEnRvJcnEG9FStYlnn6mBT3LZog2MJFYarfQej5l7IhodOk7p7tOe",
-      },
-    });
+    const response = await apiClient.get(`/student_dashboard/student_notification/`);
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error fetching student notifications:", error);
-    return { success: false, error: handleError(error, "Failed to fetch student notifications.") };
+    return { success: false, error: "Failed to fetch student notifications." };
   }
 };
+
+// **Fetch Leaderboard**
+export const fetchLeaderboard = async () => {
+  try {
+    const response = await apiClient.get(`/student_dashboard/student_leaderboard/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    return { success: false, error: handleError(error, "Failed to fetch leaderboard.") };
+  }
+};
+
+
 
 // **Fetch School Dashboard**
 export const fetchSchoolDashboard = async (username) => {
@@ -130,6 +138,28 @@ export const createStudentProfile = async (studentData) => {
   }
 };
 
+// **Update Student Profile (Partial Update)**
+export const updateStudentProfile = async (username, profileData) => {
+  try {
+    const response = await apiClient.patch(`/student_dashboard/student-profile/${username}/`, profileData);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+    return { success: false, error: handleError(error, "Failed to update profile.") };
+  }
+};
+
+export const updateStudentPassword = async (username, newPassword) => {
+  try {
+    const response = await axios.patch(`${API_BASE_URL}/student_dashboard/student-profile/update-password/`, {
+      user: { username, password: newPassword },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.response?.data || "An error occurred" };
+  }
+};
+
 // **Logout Function**
 export const logout = async () => {
   try {
@@ -142,15 +172,15 @@ export const logout = async () => {
   }
 };
 
-// **Update Student Profile**
-export const updateStudentProfile = async (username, profileData) => {
-  try {
-    const response = await apiClient.put(`/student_dashboard/student-profile/${username}/`, profileData);
-    return { success: true, data: response.data };
-  } catch (error) {
-    return { success: false, error: handleError(error, "Failed to update profile.") };
-  }
-};
+// // **Update Student Profile**
+// export const updateStudentProfile = async (username, profileData) => {
+//   try {
+//     const response = await apiClient.put(`/student_dashboard/student-profile/${username}/`, profileData);
+//     return { success: true, data: response.data };
+//   } catch (error) {
+//     return { success: false, error: handleError(error, "Failed to update profile.") };
+//   }
+// };
 
 // **Patch Student Profile (PATCH)**
 export const patchStudentProfile = async (username, profileData) => {
@@ -309,16 +339,16 @@ export const createKreativityShow = async (showData) => {
   }
 };
 
-// **Fetch Leaderboard**
-export const fetchLeaderboard = async () => {
-  try {
-    const response = await apiClient.get(`/school_dashboard/leaderboard/`);
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error("Error fetching leaderboard:", error);
-    return { success: false, error: handleError(error, "Failed to fetch leaderboard.") };
-  }
-};
+// // **Fetch Leaderboard**
+// export const fetchLeaderboard = async () => {
+//   try {
+//     const response = await apiClient.get(`/school_dashboard/leaderboard/`);
+//     return { success: true, data: response.data };
+//   } catch (error) {
+//     console.error("Error fetching leaderboard:", error);
+//     return { success: false, error: handleError(error, "Failed to fetch leaderboard.") };
+//   }
+// };
 
 // **Fetch Macro Planner**
 export const fetchMacroPlanner = async () => {

@@ -4,7 +4,7 @@ import { fetchStudentDashboard, fetchStudentNotifications } from "../../api/apis
 import "./profilecard.css";
 import Social from "./Social";
 import Loader from "./loader";
-import PerformanceChart from "./PerformanceChart"; // Import the new PerformanceChart component
+import PerformanceChart from "./PerformanceChart";
 import Linegraph from "./Linegraph";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
@@ -26,7 +26,7 @@ const ProfileCard = ({ username }) => {
       try {
         const response = await fetchStudentDashboard(username);
         if (response.success) {
-          setData(response.data); // Store the entire data object
+          setData(response.data);
         } else {
           setError("Failed to fetch dashboard data.");
         }
@@ -75,77 +75,67 @@ ProfileCard.propTypes = {
   username: PropTypes.string.isRequired,
 };
 
-const ActionCards = () => (
-  <div className="action-cards">
-  {/* Top card */}
-    {/* <div className="action-card consultation">
-      <div className="header-con">
-        <img
-          src="https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Icon"
-          className="img1"
-        />
-        <div className="header-con3">
-          <h4>
-            <b>CONSULTATION</b>
-          </h4>
-          <h6>Points</h6>
-          <button className="btn1">Hello1</button>
-          <button className="btn2">Hello</button>
-        </div>
-      </div> 
-    </div> */}
+const ActionCards = () => {
+  const [notifications, setNotifications] = useState([]);
 
-  {/* Top card */}
-    {/* <div className="action-card consultation">
-      <div className="header-con">
-        <img
-          src="https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Icon"
-          className="img1"
-        />
-        <div className="header-con3">
-          <h4>
-            <b>CONSULTATION</b>
-          </h4>
-          <h6>Points</h6>
-          <button className="btn1">Hello1</button>
-          <button className="btn2">Hello</button>
-        </div>
-      </div> 
-    </div> */}
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const response = await fetchStudentNotifications();
+        if (response.success) {
+          setNotifications(response.data);
+        } else {
+          setNotifications([]);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+        setNotifications([]);
+      }
+    };
 
-    {/* Bottom cards */}
-    <div className="action-cards-row">
-      <div className="action-card set-target1">
-        <i className="bi bi-bell-fill icon"></i>
-        <h4>Notifications (2)</h4>
-      </div>
-      <div className="header-con1">
-        <ul>
-          <li>New assignments have been posted, check now.</li>
-          <li>Reminder: Parent-teacher meeting scheduled for tomorrow</li>
-        </ul>
-      </div>
-      <div className="action-card set-target">
-        <i className="bi bi-bullseye icon"></i>
-        <h4>Teachers Comment</h4>
-        <div className="header-con">
-          <ul>
-            <li>
-              Your performance is steady, showing a good understanding of the
-              basics.
-            </li>
-          </ul>
+    loadNotifications();
+  }, []);
+
+  return (
+    <div className="action-cards">
+      <div className="action-cards-row">
+        <div className="action-card set-target1">
+          <div className="icon-heading">
+            <i className="bi bi-bell-fill icon"></i>
+            <h4>Notifications ({notifications.length})</h4>
+          </div>
+          <div className="header-con1">
+            <ul>
+              {notifications.length > 0 ? (
+                notifications.map((notification, index) => (
+                  <li key={index}>{notification.message}</li>
+                ))
+              ) : (
+                <li>No new notifications</li>
+              )}
+            </ul>
+          </div>
+        </div>
+        <div className="action-card set-target">
+          <div className="icon-heading">
+            <i className="bi bi-bullseye icon"></i>
+            <h4>Teachers Comment</h4>
+          </div>
+          <div className="header-con">
+            <ul>
+              <li>Your performance is steady, showing a good understanding of the basics.</li>
+              <li>Keep up the good work and continue to practice.</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const LeftContainer = ({ data }) => {
   return (
-    <div clame="left-container">
+    <div className="left-container">
       <h1>
         <b>Hello, </b>
         {data?.profile?.name || "Student"}
@@ -153,7 +143,6 @@ const LeftContainer = ({ data }) => {
       <h6>Nice to have you back, what an exciting day!</h6>
       <h6>Get ready and continue your lessons today.</h6>
       <h2>Your Performance</h2>
-      {/* Use the PerformanceChart component here */}
       <PerformanceChart />
       <div className="bottom-card">
         <Social />
@@ -178,9 +167,7 @@ const LearningActivity = () => (
   <div className="learning-activity">
     <h3>Learning Activity</h3>
     <div className="chart">
-      {/* Placeholder for chart */}
-      <Linegraph />{" "}
-      {/* Assuming AssessmentReport is the component rendering the Line graph */}
+      <Linegraph />
     </div>
   </div>
 );

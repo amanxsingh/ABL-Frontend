@@ -42,7 +42,6 @@ const ProfileForm = ({ onClose }) => {
         name: profileData.name,
         grade: profileData.grade,
         section: profileData.section,
-        school: profileData.school,
       };
 
       console.log("Profile Payload:", profilePayload);
@@ -160,8 +159,8 @@ const ProfileForm = ({ onClose }) => {
             id="school"
             name="school"
             value={profileData.school || ""}
-            onChange={handleChange}
             className="form-control"
+            readOnly
           />
         </div>
 
