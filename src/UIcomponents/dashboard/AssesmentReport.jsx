@@ -10,9 +10,8 @@ import {
   LineElement,
   ArcElement,
 } from "chart.js";
-// import Calendar from "react-calendar";
-// import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
+import { fetchLeaderboard } from "../../api/apiservice";
 
 // Register Chart.js components
 ChartJS.register(
@@ -55,6 +54,7 @@ const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow-y: auto;
   }
 
   .placeholder-card-new {
@@ -151,11 +151,29 @@ const AssessmentReport = () => {
   const [selectedMonth, setSelectedMonth] = useState("April");
   const [selectedDate, setSelectedDate] = useState(new Date(2024, 3, 1));
   const [activeStartDate, setActiveStartDate] = useState(new Date(2024, 3, 1));
+  const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     setSelectedMonth("April");
     setSelectedDate(new Date(2024, 3, 1));
     setActiveStartDate(new Date(2024, 3, 1));
+  }, []);
+
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      try {
+        const response = await fetchLeaderboard();
+        if (response.success) {
+          setLeaderboard(response.data);
+        } else {
+          console.error("Failed to fetch leaderboard.");
+        }
+      } catch (error) {
+        console.error("Error fetching leaderboard:", error);
+      }
+    };
+
+    loadLeaderboard();
   }, []);
 
   const handleMonthClick = (event, activeElements) => {
@@ -250,19 +268,18 @@ const AssessmentReport = () => {
       </div>
 
       <div className="card-new calendar-card-new">
-        {/* <Calendar
-          value={selectedDate}
-          onClickDay={handleDateClick}
-          onActiveStartDateChange={({ activeStartDate }) => {
-            setActiveStartDate(activeStartDate);
-          }}
-          activeStartDate={activeStartDate}
-          tileDisabled={({ date }) => {
-            const startDate = new Date(2024, 3, 1);
-            const endDate = new Date(2025, 2, 31);
-            return date < startDate || date > endDate;
-          }}
-        /> */}
+        <h4>Leaderboard</h4>
+        <ul>
+          {leaderboard.length > 0 ? (
+            leaderboard.map((student, index) => (
+              <li key={index}>
+                {student.name}: {student.score}
+              </li>
+            ))
+          ) : (
+            <li>No leaderboard data available</li>
+          )}
+        </ul>
       </div>
 
       <div className="card-new placeholder-card-new">

@@ -61,20 +61,28 @@ export const fetchStudentDashboard = async (username) => {
   }
 };
 
-// **Fetch Student Notifications**
 export const fetchStudentNotifications = async () => {
   try {
-    const response = await apiClient.get(`/student_dashboard/student_notification/`, {
-      headers: {
-        "X-CSRFToken": "9nxKSJAkiblLEnRvJcnEG9FStYlnn6mBT3LZog2MJFYarfQej5l7IhodOk7p7tOe",
-      },
-    });
+    const response = await apiClient.get(`/student_dashboard/student_notification/`);
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error fetching student notifications:", error);
-    return { success: false, error: handleError(error, "Failed to fetch student notifications.") };
+    return { success: false, error: "Failed to fetch student notifications." };
   }
 };
+
+// **Fetch Leaderboard**
+export const fetchLeaderboard = async () => {
+  try {
+    const response = await apiClient.get(`/student_dashboard/student_leaderboard/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    return { success: false, error: handleError(error, "Failed to fetch leaderboard.") };
+  }
+};
+
+
 
 // **Fetch School Dashboard**
 export const fetchSchoolDashboard = async (username) => {
@@ -119,6 +127,24 @@ export const fetchStudentProfile = async (username) => {
   }
 };
 
+// **Fetch Student Login Activity**
+export const fetchStudentLoginActivity = async () => {
+  try {
+    const response = await apiClient.get(`/student_dashboard/student/login-activity/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching login activity:", error);
+
+    let errorMessage = "Error fetching login activity.";
+    if (error.response?.data) {
+      errorMessage = JSON.stringify(error.response.data);
+    }
+
+    return { success: false, error: errorMessage };
+  }
+};
+
+
 // **Create Student Profile**
 export const createStudentProfile = async (studentData) => {
   try {
@@ -129,6 +155,37 @@ export const createStudentProfile = async (studentData) => {
     return { success: false, error: handleError(error, "Failed to create student profile.") };
   }
 };
+
+// **Update Student Profile (Partial Update)**
+export const updateStudentProfile = async (username, profileData) => {
+  try {
+    const response = await apiClient.patch(`/student_dashboard/student-profile/${username}/`, profileData);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+    return { success: false, error: handleError(error, "Failed to update profile.") };
+  }
+};
+
+// **Update Student Password**
+export const updateStudentPassword = async (username, newPassword) => {
+  try {
+    const response = await apiClient.patch(`/student_dashboard/student-profile/update-password/`, {
+      user: { username, password: newPassword },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error updating password:", error);
+
+    let errorMessage = "An error occurred";
+    if (error.response?.data) {
+      errorMessage = JSON.stringify(error.response.data); // Convert object to string
+    }
+
+    return { success: false, error: errorMessage };
+  }
+};
+
 
 // **Logout Function**
 export const logout = async () => {
@@ -142,15 +199,15 @@ export const logout = async () => {
   }
 };
 
-// **Update Student Profile**
-export const updateStudentProfile = async (username, profileData) => {
-  try {
-    const response = await apiClient.put(`/student_dashboard/student-profile/${username}/`, profileData);
-    return { success: true, data: response.data };
-  } catch (error) {
-    return { success: false, error: handleError(error, "Failed to update profile.") };
-  }
-};
+// // **Update Student Profile**
+// export const updateStudentProfile = async (username, profileData) => {
+//   try {
+//     const response = await apiClient.put(`/student_dashboard/student-profile/${username}/`, profileData);
+//     return { success: true, data: response.data };
+//   } catch (error) {
+//     return { success: false, error: handleError(error, "Failed to update profile.") };
+//   }
+// };
 
 // **Patch Student Profile (PATCH)**
 export const patchStudentProfile = async (username, profileData) => {
@@ -309,16 +366,16 @@ export const createKreativityShow = async (showData) => {
   }
 };
 
-// **Fetch Leaderboard**
-export const fetchLeaderboard = async () => {
-  try {
-    const response = await apiClient.get(`/school_dashboard/leaderboard/`);
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error("Error fetching leaderboard:", error);
-    return { success: false, error: handleError(error, "Failed to fetch leaderboard.") };
-  }
-};
+// // **Fetch Leaderboard**
+// export const fetchLeaderboard = async () => {
+//   try {
+//     const response = await apiClient.get(`/school_dashboard/leaderboard/`);
+//     return { success: true, data: response.data };
+//   } catch (error) {
+//     console.error("Error fetching leaderboard:", error);
+//     return { success: false, error: handleError(error, "Failed to fetch leaderboard.") };
+//   }
+// };
 
 // **Fetch Macro Planner**
 export const fetchMacroPlanner = async () => {
