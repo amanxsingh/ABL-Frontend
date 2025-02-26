@@ -7,6 +7,7 @@ import Learning from "./learning";
 import SchoolDashboard from "./pages/schoolDashboard/SchoolDashboard";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import  TeacherDashboard  from "./pages/teacherDashboard/TeacherDashboard";
 
 // Create a context to manage authentication state
 export const AuthContext = createContext();
@@ -24,6 +25,7 @@ PrivateRoute.propTypes = {
 function RoleBasedRoute() {
   const { role } = useContext(AuthContext);
   if (role === "school") return <Navigate to="/school_dashboard" />;
+  if (role === "teacher") return <Navigate to="/teacher_dashboard" />;
   return <Dashboard />;
 }
 
@@ -69,7 +71,16 @@ function App() {
           path="/school_dashboard"
           element={
             <PrivateRoute>
-              {role === "student" ? <Navigate to="/dashboard" /> : <SchoolDashboard />}
+              <SchoolDashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route 
+          path="/teacher_dashboard"
+          element={
+            <PrivateRoute>
+              <TeacherDashboard />
             </PrivateRoute>
           }
         />

@@ -486,3 +486,13 @@ export const fetchSchoolDashboardByUsername = async (username) => {
     return { success: false, error: handleError(error, "Failed to fetch school dashboard.") };
   }
 };
+
+export const fetchTeacherDashboard = async (username) => {
+  try {
+    const response = await apiClient.get(`/teacher_dashboard/${username}/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching teacher dashboard:", error.response?.data || error);
+    return { success: false, error: handleError(error, "Failed to load Teacher dashboard.") };
+  }
+};
