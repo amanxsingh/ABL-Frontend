@@ -16,6 +16,16 @@ import { logout } from "../../api/apiservice";
 import "../../utils/css/sidebar.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Loader from "../../UIcomponents/dashboard/loader";
+import TeacherDashboardContent from "./TeacherDashboardContent";
+import InnovationClub from "./InnovationClub";
+import Inventory from "./Inventory";
+import KreativityShow from "./KreativityShow";
+import MacroPlanner from "./MacroPlanner";
+import MicroPlanner from "./MicroPlanner";
+import MonthlyReport from "./MonthlyReport";
+import AdvocacyReport from "./AdvocacyReport";
+import ClassroomGallery from "./ClassroomGallery";
+import LearnersAssigned from "./LearnersAssigned";
 
 const TeacherDashboard = () => {
   const [data, setData] = useState(null);
@@ -65,28 +75,25 @@ const TeacherDashboard = () => {
   const renderContent = () => {
     switch (activeContent) {
       case "dashboard":
-        return (
-          <div>
-            <h2>Teacher Dashboard</h2>
-            <p><strong>Username:</strong> {data?.profile?.user?.username}</p>
-            <p><strong>Email:</strong> {data?.profile?.user?.email}</p>
-            <p><strong>Role:</strong> {data?.profile?.user?.role}</p>
-          </div>
-        );
+        return <TeacherDashboardContent />;
       case "innovationClub":
-        return <FetchDataContent fetchFunction={fetchInnovationClub} title="Innovation Club" />;
+        return <InnovationClub />;
       case "inventory":
-        return <FetchDataContent fetchFunction={fetchInventory} title="Inventory" />;
+        return <Inventory />;
       case "kreativityShow":
-        return <FetchDataContent fetchFunction={fetchKreativityShow} title="Kreativity Show" />;
+        return <KreativityShow />;
       case "macroPlanner":
-        return <FetchDataContent fetchFunction={fetchMacroPlanner} title="Macro Planner" />;
+        return <MacroPlanner />;
       case "microPlanner":
-        return <FetchDataContent fetchFunction={fetchMicroPlanner} title="Micro Planner" />;
+        return <MicroPlanner />;
       case "monthlyReports":
-        return <FetchDataContent fetchFunction={fetchMonthlyReports} title="Monthly Reports" />;
-      case "studentAccessReport":
-        return <FetchDataContent fetchFunction={fetchStudentAccessReport} title="Student Access Report" />;
+        return <MonthlyReport />;
+            case "advocacyReport":
+        return <AdvocacyReport />;
+      case "classroomGallery":
+        return <ClassroomGallery />;
+      case "learnersAssigned":
+        return <LearnersAssigned />;
       default:
         return <div>Select an option</div>;
     }
@@ -138,20 +145,45 @@ const TeacherDashboard = () => {
         onMouseEnter={() => setIsCollapsed(false)}
         onMouseLeave={() => setIsCollapsed(true)}
       >
+        <div className="sidebar-profile">
+          <img
+            src={data?.profile?.user?.profile_pic || "https://via.placeholder.com/80"}
+            alt="Profile"
+            className="profile-image"
+          />
+          {!isCollapsed && (
+            <div className="profile-info">
+              <div className="profile-name">{data?.profile?.user?.username}</div>
+            </div>
+          )}
+        </div>
         <div className="sidebar-content">
-          {["dashboard", "innovationClub", "inventory", "kreativityShow", "macroPlanner", "microPlanner", "monthlyReports", "studentAccessReport"].map((item) => (
+          {[
+            { label: "Dashboard", key: "dashboard", icon: "bi-house" },
+            { label: "Innovation Club", key: "innovationClub", icon: "bi-lightbulb" },
+            { label: "Inventory", key: "inventory", icon: "bi-box" },
+            { label: "Kreativity Show", key: "kreativityShow", icon: "bi-camera-reels" },
+            { label: "Macro Planner", key: "macroPlanner", icon: "bi-calendar" },
+            { label: "Micro Planner", key: "microPlanner", icon: "bi-calendar-check" },
+            { label: "Monthly Reports", key: "monthlyReports", icon: "bi-file-earmark-text" },
+                        { label: "Advocacy Report", key: "advocacyReport", icon: "bi-file-earmark" },
+            { label: "Classroom Gallery", key: "classroomGallery", icon: "bi-images" },
+            { label: "Learners Assigned", key: "learnersAssigned", icon: "bi-people" },
+          ].map((item) => (
             <div
-              key={item}
-              className={`sidebar-item ${activeContent === item ? "active" : ""}`}
-              onClick={() => setActiveContent(item)}
+              key={item.key}
+              className={`sidebar-item ${activeContent === item.key ? "active" : ""}`}
+              onClick={() => setActiveContent(item.key)}
             >
-              <span className="sidebar-text">{item}</span>
+              <i className={`bi ${item.icon} sidebar-icon`}></i>
+              {!isCollapsed && <span className="sidebar-text">{item.label}</span>}
             </div>
           ))}
         </div>
         <div className="logout-section">
           <div className="sidebar-item" onClick={handleLogout}>
-            <span className="sidebar-text">Logout</span>
+            <i className="bi bi-box-arrow-right sidebar-icon"></i>
+            {!isCollapsed && <span className="sidebar-text">Logout</span>}
           </div>
         </div>
       </div>
@@ -167,63 +199,10 @@ TeacherDashboard.propTypes = {
         username: PropTypes.string,
         email: PropTypes.string,
         role: PropTypes.string,
+        profile_pic: PropTypes.string,
       }),
     }),
   }),
 };
 
 export default TeacherDashboard;
-
-
-// import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { fetchTeacherDashboard } from "../../api/teacherApiService";
-// import Loader from "../../UIcomponents/dashboard/loader";
-
-// const TeacherDashboard = () => {
-//   const [data, setData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const navigate = useNavigate();
-
-//   const username = localStorage.getItem("username") || "";
-//   const isAuthenticated = localStorage.getItem("isAuthenticated");
-
-//   useEffect(() => {
-//     if (isAuthenticated !== "true") {
-//       navigate("/login");
-//       return;
-//     }
-
-//     const fetchData = async () => {
-//       try {
-//         const result = await fetchTeacherDashboard(username);
-//         if (result.success) {
-//           setData(result.data);
-//         } else {
-//           setError("Failed to fetch teacher dashboard data.");
-//         }
-//       } catch {
-//         setError("Error fetching data.");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     if (username) fetchData();
-//   }, [username, navigate]);
-
-//   if (loading) return <Loader />;
-//   if (error) return <div>{error}</div>;
-
-//   return (
-//     <div>
-//       <h2>Teacher Dashboard</h2>
-//       <p><strong>Username:</strong> {data?.profile?.user?.username}</p>
-//       <p><strong>Email:</strong> {data?.profile?.user?.email}</p>
-//       <p><strong>Role:</strong> {data?.profile?.user?.role}</p>
-//     </div>
-//   );
-// };
-
-// export default TeacherDashboard ;
