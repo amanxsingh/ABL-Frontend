@@ -26,6 +26,7 @@ import MonthlyReport from "./MonthlyReport";
 import AdvocacyReport from "./AdvocacyReport";
 import ClassroomGallery from "./ClassroomGallery";
 import LearnersAssigned from "./LearnersAssigned";
+import StudentReport from "./StudentReport";
 
 const TeacherDashboard = () => {
   const [data, setData] = useState(null);
@@ -88,12 +89,14 @@ const TeacherDashboard = () => {
         return <MicroPlanner />;
       case "monthlyReports":
         return <MonthlyReport />;
-            case "advocacyReport":
+      case "advocacyReport":
         return <AdvocacyReport />;
       case "classroomGallery":
         return <ClassroomGallery />;
       case "learnersAssigned":
         return <LearnersAssigned />;
+      case "studentReport":
+        return <StudentReport />;
       default:
         return <div>Select an option</div>;
     }
@@ -166,9 +169,10 @@ const TeacherDashboard = () => {
             { label: "Macro Planner", key: "macroPlanner", icon: "bi-calendar" },
             { label: "Micro Planner", key: "microPlanner", icon: "bi-calendar-check" },
             { label: "Monthly Reports", key: "monthlyReports", icon: "bi-file-earmark-text" },
-                        { label: "Advocacy Report", key: "advocacyReport", icon: "bi-file-earmark" },
+            { label: "Advocacy Report", key: "advocacyReport", icon: "bi-file-earmark" },
             { label: "Classroom Gallery", key: "classroomGallery", icon: "bi-images" },
             { label: "Learners Assigned", key: "learnersAssigned", icon: "bi-people" },
+            { label: "Student Report", key: "studentReport", icon: "bi-file-earmark-bar-graph" },
           ].map((item) => (
             <div
               key={item.key}
