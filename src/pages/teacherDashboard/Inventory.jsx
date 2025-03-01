@@ -1,20 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Teacher CSS/Inventory.css";
+import { fetchInventory, createInventory, updateInventory, deleteInventory } from "../../api/teacherApiService";
 
 const Inventory = () => {
-  const [components, setComponents] = useState([
-    { id: 1, name: "Component A", totalQuantity: 100, availableQuantity: 80, addedDate: "2025-01-01" },
-    { id: 2, name: "Component B", totalQuantity: 200, availableQuantity: 150, addedDate: "2025-02-01" },
-  ]);
+  const [components, setComponents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentComponent, setCurrentComponent] = useState(null);
   const [isModify, setIsModify] = useState(false);
+  const [school, setSchool] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetchInventory();
+      if (result.success) {
+        setComponents(result.data);
+      } else {
+        console.error("Failed to fetch inventory data:", result.error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleShowModal = (component = null) => {
     setCurrentComponent(component);
     setIsModify(!!component);
+    setSchool(component ? component.school : "");
     setShowModal(true);
   };
 
@@ -22,54 +35,48 @@ const Inventory = () => {
     setShowModal(false);
     setCurrentComponent(null);
     setIsModify(false);
+    setSchool("");
   };
 
-  const handleSaveComponent = (event) => {
+  const handleSaveComponent = async (event) => {
     event.preventDefault();
     const form = event.target;
     const newComponent = {
-      id: currentComponent ? currentComponent.id : components.length + 1,
-      name: form.elements.name.value,
-      totalQuantity: parseInt(form.elements.totalQuantity.value, 10),
-      availableQuantity: parseInt(form.elements.availableQuantity.value, 10),
-      addedDate: form.elements.addedDate.value,
+      id: currentComponent ? currentComponent.id : undefined,
+      school: form.elements.school.value,
+      component_name: form.elements.name.value,
+      total_quantity: parseInt(form.elements.totalQuantity.value, 10),
+      quantity_available: parseInt(form.elements.availableQuantity.value, 10),
+      components_added_date: form.elements.addedDate.value,
     };
 
+    let result;
     if (currentComponent) {
-      setComponents(components.map((component) => (component.id === currentComponent.id ? newComponent : component)));
+      result = await updateInventory(newComponent);
     } else {
-      setComponents([...components, newComponent]);
+      result = await createInventory(newComponent);
     }
 
-    handleCloseModal();
-  };
-
-  const handleModifyComponent = (event) => {
-    event.preventDefault();
-    const form = event.target;
-    const modifiedComponent = {
-      ...currentComponent,
-      name: form.elements.name.value,
-      totalQuantity: parseInt(form.elements.totalQuantity.value, 10),
-      availableQuantity: currentComponent.availableQuantity,
-      addedDate: form.elements.addedDate.value,
-    };
-
-    const quantityChange = parseInt(form.elements.quantity.value, 10);
-    const transactionType = form.elements.transactionType.value;
-
-    if (transactionType === "credit") {
-      modifiedComponent.availableQuantity += quantityChange;
-    } else if (transactionType === "debit") {
-      modifiedComponent.availableQuantity -= quantityChange;
+    if (result.success) {
+      const updatedComponent = result.data;
+      setComponents((prevComponents) =>
+        currentComponent
+          ? prevComponents.map((component) => (component.id === updatedComponent.id ? updatedComponent : component))
+          : [...prevComponents, updatedComponent]
+      );
+      handleCloseModal();
+    } else {
+      console.error("Failed to save component:", result.error);
     }
-
-    setComponents(components.map((component) => (component.id === currentComponent.id ? modifiedComponent : component)));
-    handleCloseModal();
   };
 
-  const handleDeleteComponent = (id) => {
-    setComponents(components.filter((component) => component.id !== id));
+  const handleDeleteComponent = async (id) => {
+    const result = await deleteInventory(id);
+    if (result.success) {
+      setComponents(components.filter((component) => component.id !== id));
+    } else {
+      console.error("Failed to delete component:", result.error);
+    }
   };
 
   return (
@@ -83,6 +90,7 @@ const Inventory = () => {
       <table className="table">
         <thead>
           <tr>
+            <th>School</th>
             <th>Component Name</th>
             <th>Total Quantity</th>
             <th>Available Quantity</th>
@@ -94,10 +102,11 @@ const Inventory = () => {
         <tbody>
           {components.map((component) => (
             <tr key={component.id}>
-              <td>{component.name}</td>
-              <td>{component.totalQuantity}</td>
-              <td>{component.availableQuantity}</td>
-              <td>{component.addedDate}</td>
+              <td>{component.school}</td>
+              <td>{component.component_name}</td>
+              <td>{component.total_quantity}</td>
+              <td>{component.quantity_available}</td>
+              <td>{component.components_added_date}</td>
               <td>
                 <Button variant="secondary" onClick={() => handleShowModal(component)}>
                   Modify
@@ -117,23 +126,33 @@ const Inventory = () => {
         <Modal.Header closeButton>
           <Modal.Title>{isModify ? "Modify Component" : "Add Component"}</Modal.Title>
         </Modal.Header>
-        <Form onSubmit={isModify ? handleModifyComponent : handleSaveComponent}>
+        <Form onSubmit={handleSaveComponent}>
           <Modal.Body>
+            <Form.Group controlId="formSchool">
+              <Form.Label>School</Form.Label>
+              <Form.Control
+                type="text"
+                name="school"
+                value={school}
+                onChange={(e) => setSchool(e.target.value)}
+                required
+              />
+            </Form.Group>
             <Form.Group controlId="formComponentName">
               <Form.Label>Component Name</Form.Label>
-              <Form.Control type="text" name="name" defaultValue={currentComponent?.name || ""} required />
+              <Form.Control type="text" name="name" defaultValue={currentComponent?.component_name || ""} required />
             </Form.Group>
             <Form.Group controlId="formTotalQuantity">
               <Form.Label>Total Quantity</Form.Label>
-              <Form.Control type="number" name="totalQuantity" defaultValue={currentComponent?.totalQuantity || ""} required />
+              <Form.Control type="number" name="totalQuantity" defaultValue={currentComponent?.total_quantity || ""} required />
             </Form.Group>
             <Form.Group controlId="formAvailableQuantity">
               <Form.Label>Available Quantity</Form.Label>
-              <Form.Control type="number" name="availableQuantity" defaultValue={currentComponent?.availableQuantity || ""} required />
+              <Form.Control type="number" name="availableQuantity" defaultValue={currentComponent?.quantity_available || ""} required />
             </Form.Group>
             <Form.Group controlId="formAddedDate">
               <Form.Label>Added Date</Form.Label>
-              <Form.Control type="date" name="addedDate" defaultValue={currentComponent?.addedDate || ""} required />
+              <Form.Control type="date" name="addedDate" defaultValue={currentComponent?.components_added_date || ""} required />
             </Form.Group>
             {isModify && (
               <>

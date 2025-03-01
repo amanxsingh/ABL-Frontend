@@ -1,46 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Teacher CSS/MacroPlanner.css";
+import { fetchMacroPlanner, addMacroPlanner, updateMacroPlanner, deleteMacroPlanner } from "../../api/teacherApiService";
 
 const MacroPlanner = () => {
-  const [planners, setPlanners] = useState([
-    { id: 1, grade: 1, file: "file1.pdf" },
-    { id: 2, grade: 2, file: "file2.pdf" },
-  ]);
+  const [planners, setPlanners] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentPlanner, setCurrentPlanner] = useState(null);
+  const [school, setSchool] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetchMacroPlanner();
+      if (result.success) {
+        setPlanners(result.data.macroplanner);
+      } else {
+        console.error("Failed to fetch macroplanner data:", result.error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleShowModal = (planner = null) => {
     setCurrentPlanner(planner);
+    setSchool(planner ? planner.school : "");
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
     setCurrentPlanner(null);
+    setSchool("");
   };
 
-  const handleSavePlanner = (event) => {
+  const handleSavePlanner = async (event) => {
     event.preventDefault();
     const form = event.target;
     const newPlanner = {
-      id: currentPlanner ? currentPlanner.id : planners.length + 1,
-      grade: parseInt(form.elements.grade.value, 10),
-      file: form.elements.file.files[0].name,
+      id: currentPlanner ? currentPlanner.id : undefined,
+      grade: form.elements.grade.value,
+      school: form.elements.school.value,
+      file: form.elements.file.files[0],
     };
 
+    let result;
     if (currentPlanner) {
-      setPlanners(planners.map((planner) => (planner.id === currentPlanner.id ? newPlanner : planner)));
+      result = await updateMacroPlanner(newPlanner);
     } else {
-      setPlanners([...planners, newPlanner]);
+      result = await addMacroPlanner(newPlanner);
     }
 
-    handleCloseModal();
+    if (result.success) {
+      const updatedPlanner = result.data;
+      setPlanners((prevPlanners) =>
+        currentPlanner
+          ? prevPlanners.map((planner) => (planner.id === updatedPlanner.id ? updatedPlanner : planner))
+          : [...prevPlanners, updatedPlanner]
+      );
+      handleCloseModal();
+    } else {
+      console.error("Failed to save macroplanner:", result.error);
+    }
   };
 
-  const handleDeletePlanner = (id) => {
-    setPlanners(planners.filter((planner) => planner.id !== id));
+  const handleDeletePlanner = async (id) => {
+    const result = await deleteMacroPlanner(id);
+    if (result.success) {
+      setPlanners(planners.filter((planner) => planner.id !== id));
+    } else {
+      console.error("Failed to delete macroplanner:", result.error);
+    }
+  };
+
+  const handleViewPlanner = (planner) => {
+    window.open(`https://mechanzo.com${planner.file}`, '_blank');
   };
 
   return (
@@ -51,38 +86,44 @@ const MacroPlanner = () => {
           Add MacroPlanner
         </Button>
       </div>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Grade</th>
-            <th>View</th>
-            <th>Modify</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {planners.map((planner) => (
-            <tr key={planner.id}>
-              <td>{planner.grade}</td>
-              <td>
-                <a href={`/${planner.file}`} target="_blank" rel="noopener noreferrer">
-                  View
-                </a>
-              </td>
-              <td>
-                <Button variant="secondary" onClick={() => handleShowModal(planner)}>
-                  Modify
-                </Button>
-              </td>
-              <td>
-                <Button variant="danger" onClick={() => handleDeletePlanner(planner.id)}>
-                  Delete
-                </Button>
-              </td>
+      {planners.length === 0 ? (
+        <p>No MacroPlanner is available for this teacher.</p>
+      ) : (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>School</th>
+              <th>View</th>
+              <th>Modify</th>
+              <th>Delete</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {planners.map((planner) => (
+              <tr key={planner.id}>
+                <td>{planner.grade}</td>
+                <td>{planner.school}</td>
+                <td>
+                  <Button variant="link" onClick={() => handleViewPlanner(planner)}>
+                    View
+                  </Button>
+                </td>
+                <td>
+                  <Button variant="secondary" onClick={() => handleShowModal(planner)}>
+                    Modify
+                  </Button>
+                </td>
+                <td>
+                  <Button variant="danger" onClick={() => handleDeletePlanner(planner.id)}>
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
@@ -99,6 +140,16 @@ const MacroPlanner = () => {
                   </option>
                 ))}
               </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="formSchool">
+              <Form.Label>School</Form.Label>
+              <Form.Control
+                type="text"
+                name="school"
+                value={school}
+                onChange={(e) => setSchool(e.target.value)}
+                required
+              />
             </Form.Group>
             <Form.Group controlId="formFile">
               <Form.Label>Upload File</Form.Label>

@@ -1,46 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Teacher CSS/MicroPlanner.css";
+import { fetchMicroPlanner, addMicroPlanner, updateMicroPlanner, deleteMicroPlanner } from "../../api/teacherApiService";
 
 const MicroPlanner = () => {
-  const [planners, setPlanners] = useState([
-    { id: 1, month: "January", file: "file1.pdf" },
-    { id: 2, month: "February", file: "file2.pdf" },
-  ]);
+  const [planners, setPlanners] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentPlanner, setCurrentPlanner] = useState(null);
+  const [school, setSchool] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetchMicroPlanner();
+      if (result.success) {
+        setPlanners(result.data.microplanner);
+      } else {
+        console.error("Failed to fetch microplanner data:", result.error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleShowModal = (planner = null) => {
     setCurrentPlanner(planner);
+    setSchool(planner ? planner.school : "");
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
     setCurrentPlanner(null);
+    setSchool("");
   };
 
-  const handleSavePlanner = (event) => {
+  const handleSavePlanner = async (event) => {
     event.preventDefault();
     const form = event.target;
     const newPlanner = {
-      id: currentPlanner ? currentPlanner.id : planners.length + 1,
+      id: currentPlanner ? currentPlanner.id : undefined,
       month: form.elements.month.value,
-      file: form.elements.file.files[0].name,
+      school: form.elements.school.value,
+      microplanner: form.elements.file.files[0],
     };
 
+    let result;
     if (currentPlanner) {
-      setPlanners(planners.map((planner) => (planner.id === currentPlanner.id ? newPlanner : planner)));
+      result = await updateMicroPlanner(newPlanner);
     } else {
-      setPlanners([...planners, newPlanner]);
+      result = await addMicroPlanner(newPlanner);
     }
 
-    handleCloseModal();
+    if (result.success) {
+      const updatedPlanner = result.data;
+      setPlanners((prevPlanners) =>
+        currentPlanner
+          ? prevPlanners.map((planner) => (planner.id === updatedPlanner.id ? updatedPlanner : planner))
+          : [...prevPlanners, updatedPlanner]
+      );
+      handleCloseModal();
+    } else {
+      console.error("Failed to save microplanner:", result.error);
+    }
   };
 
-  const handleDeletePlanner = (id) => {
-    setPlanners(planners.filter((planner) => planner.id !== id));
+  const handleDeletePlanner = async (id) => {
+    const result = await deleteMicroPlanner(id);
+    if (result.success) {
+      setPlanners(planners.filter((planner) => planner.id !== id));
+    } else {
+      console.error("Failed to delete microplanner:", result.error);
+    }
+  };
+
+  const handleViewPlanner = (planner) => {
+    window.open(`https://mechanzo.com${planner.microplanner}`, '_blank');
   };
 
   return (
@@ -55,6 +90,7 @@ const MicroPlanner = () => {
         <thead>
           <tr>
             <th>Month</th>
+            <th>School</th>
             <th>View</th>
             <th>Modify</th>
             <th>Delete</th>
@@ -64,10 +100,11 @@ const MicroPlanner = () => {
           {planners.map((planner) => (
             <tr key={planner.id}>
               <td>{planner.month}</td>
+              <td>{planner.school}</td>
               <td>
-                <a href={`/${planner.file}`} target="_blank" rel="noopener noreferrer">
+                <Button variant="link" onClick={() => handleViewPlanner(planner)}>
                   View
-                </a>
+                </Button>
               </td>
               <td>
                 <Button variant="secondary" onClick={() => handleShowModal(planner)}>
@@ -99,6 +136,16 @@ const MicroPlanner = () => {
                   </option>
                 ))}
               </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="formSchool">
+              <Form.Label>School</Form.Label>
+              <Form.Control
+                type="text"
+                name="school"
+                value={school}
+                onChange={(e) => setSchool(e.target.value)}
+                required
+              />
             </Form.Group>
             <Form.Group controlId="formFile">
               <Form.Label>Upload File</Form.Label>

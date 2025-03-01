@@ -4,23 +4,30 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Teacher CSS/TDContent.css";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { fetchTeacherDashboard } from "../../api/teacherApiService";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const TeacherDashboardContent = () => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState('January');
+  const [selectedMonth, setSelectedMonth] = useState('');
   const [notifications, setNotifications] = useState(0);
   const [notificationList, setNotificationList] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef(null);
 
+  const [learnerCount, setLearnerCount] = useState(0);
+  const [activeLearnerCount, setActiveLearnerCount] = useState(0);
+  const [activeHomeworkCount, setActiveHomeworkCount] = useState(0);
+  const [lmsEngagementData, setLmsEngagementData] = useState([]);
+  const [availableMonths, setAvailableMonths] = useState([]);
+
   const handleDropdownToggle = () => {
     setShowDropdown(!showDropdown);
   };
 
-  const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value);
+  const handleMonthChange = (month) => {
+    setSelectedMonth(month);
   };
 
   const handleNotificationClick = () => {
@@ -58,12 +65,58 @@ const TeacherDashboardContent = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const result = await fetchTeacherDashboard("teacher10");
+        if (result.success) {
+          const data = result.data;
+          setLearnerCount(data.learner_count);
+          setActiveLearnerCount(data.active_learner_count);
+          setActiveHomeworkCount(data.active_homework_count);
+          setLmsEngagementData(data.lms_engagement);
+
+          // Extract available months from LMS engagement data
+          const months = Array.from(new Set(data.lms_engagement.map(item => item.login_date.slice(0, 7))));
+          setAvailableMonths(months);
+          setSelectedMonth(months[0]); // Set the first available month as the default selected month
+        } else {
+          console.error("Failed to fetch dashboard data:", result.error);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const processLmsEngagementData = (engagementData, month) => {
+    const engagementCountByDate = engagementData.reduce((acc, engagement) => {
+      const date = engagement.login_date;
+      if (date.startsWith(month)) {
+        if (!acc[date]) {
+          acc[date] = 0;
+        }
+        acc[date]++;
+      }
+      return acc;
+    }, {});
+
+    const labels = Object.keys(engagementCountByDate).sort();
+    const data = labels.map((date) => engagementCountByDate[date]);
+
+    return { labels, data };
+  };
+
+  const { labels, data } = processLmsEngagementData(lmsEngagementData, selectedMonth);
+
   const lineChartData = {
-    labels: Array.from({ length: 31 }, (_, i) => (i + 1).toString()), // Generate dates from 1 to 31
+    labels,
     datasets: [
       {
-        label: 'Access',
-        data: Array.from({ length: 31 }, (_, i) => (i + 1) * 10), // Example data
+        label: 'Engagement Count',
+        data,
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
       },
@@ -75,9 +128,9 @@ const TeacherDashboardContent = () => {
       <div className="top-bar">
         <div className="top-bar-left">
           {[
-            { number: 10, text: "Learner Activity" },
-            { number: 5, text: "Active Homework" },
-            { number: 100, text: "Total User" },
+            { number: activeLearnerCount, text: "Active Learner" },
+            { number: activeHomeworkCount, text: "Active Homework" },
+            { number: learnerCount, text: "Total Learner" },
           ].map((item, index) => (
             <div key={index} className="top-bar-card">
               <div className="number">{item.number}</div>
@@ -165,8 +218,8 @@ const TeacherDashboardContent = () => {
                 {selectedMonth}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month) => (
-                  <Dropdown.Item key={month} onClick={() => setSelectedMonth(month)}>
+                {availableMonths.map((month) => (
+                  <Dropdown.Item key={month} onClick={() => handleMonthChange(month)}>
                     {month}
                   </Dropdown.Item>
                 ))}

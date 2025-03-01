@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Teacher CSS/MonthlyReport.css";
+import { fetchMonthlyReports, createMonthlyReport, updateMonthlyReport, deleteMonthlyReport } from "../../api/teacherApiService";
 
 const MonthlyReport = () => {
-  const [reports, setReports] = useState([
-    { id: 1, date: "2025-01-01", month: "January", file: "file1.pdf" },
-    { id: 2, date: "2025-02-01", month: "February", file: "file2.pdf" },
-  ]);
+  const [reports, setReports] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentReport, setCurrentReport] = useState(null);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      const result = await fetchMonthlyReports();
+      if (result.success) {
+        setReports(result.data);
+      } else {
+        console.error("Failed to fetch monthly reports:", result.error);
+      }
+    };
+
+    fetchReports();
+  }, []);
 
   const handleShowModal = (report = null) => {
     setCurrentReport(report);
@@ -21,23 +32,43 @@ const MonthlyReport = () => {
     setCurrentReport(null);
   };
 
-  const handleSaveReport = (event) => {
+  const handleSaveReport = async (event) => {
     event.preventDefault();
     const form = event.target;
     const newReport = {
       id: currentReport ? currentReport.id : reports.length + 1,
       date: form.elements.date.value,
       month: form.elements.month.value,
-      file: form.elements.file.files[0].name,
+      school: "Your School Name", // Replace with actual school name if available
+      monthly_report: form.elements.file.files[0].name,
     };
 
     if (currentReport) {
-      setReports(reports.map((report) => (report.id === currentReport.id ? newReport : report)));
+      const result = await updateMonthlyReport(newReport);
+      if (result.success) {
+        setReports(reports.map((report) => (report.id === currentReport.id ? newReport : report)));
+      } else {
+        console.error("Failed to update monthly report:", result.error);
+      }
     } else {
-      setReports([...reports, newReport]);
+      const result = await createMonthlyReport(newReport);
+      if (result.success) {
+        setReports([...reports, newReport]);
+      } else {
+        console.error("Failed to create monthly report:", result.error);
+      }
     }
 
     handleCloseModal();
+  };
+
+  const handleDeleteReport = async (id) => {
+    const result = await deleteMonthlyReport(id);
+    if (result.success) {
+      setReports(reports.filter((report) => report.id !== id));
+    } else {
+      console.error("Failed to delete monthly report:", result.error);
+    }
   };
 
   return (
@@ -55,6 +86,7 @@ const MonthlyReport = () => {
             <th>Month</th>
             <th>View</th>
             <th>Modify</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -63,13 +95,18 @@ const MonthlyReport = () => {
               <td>{report.date}</td>
               <td>{report.month}</td>
               <td>
-                <a href={`/${report.file}`} target="_blank" rel="noopener noreferrer">
+                <a href={report.monthly_report} target="_blank" rel="noopener noreferrer">
                   View
                 </a>
               </td>
               <td>
                 <Button variant="secondary" onClick={() => handleShowModal(report)}>
                   Modify
+                </Button>
+              </td>
+              <td>
+                <Button variant="danger" onClick={() => handleDeleteReport(report.id)}>
+                  Delete
                 </Button>
               </td>
             </tr>

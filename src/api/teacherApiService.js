@@ -3,26 +3,23 @@ import axios from "axios";
 const BASE_URL = "https://mechanzo.com/teacher_dashboard";
 
 export const apiClient = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  });
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
 
-  apiClient.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        config.headers["Authorization"] = `Token ${token}`; // Ensure token is included
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
-
-
-  
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers["Authorization"] = `Token ${token}`; // Ensure token is included
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export const fetchTeacherDashboard = async (username) => {
   return apiClient.get(`/${username}/`)
@@ -49,27 +46,39 @@ export const updateInnovationClub = async (data) => {
 };
 
 export const fetchInventory = async () => {
-  return apiClient.get("/inventory/")
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+  try {
+    const response = await apiClient.get("/inventory/");
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const createInventory = async (data) => {
-  return apiClient.post("/inventory/", data)
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const createInventory = async (component) => {
+  try {
+    const response = await apiClient.post("/inventory/", component);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const updateInventory = async (data) => {
-  return apiClient.patch("/inventory/", data)
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const updateInventory = async (component) => {
+  try {
+    const response = await apiClient.patch(`/inventory/${component.id}/`, component);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const deleteInventory = async () => {
-  return apiClient.delete("/inventory/")
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const deleteInventory = async (id) => {
+  try {
+    const response = await apiClient.delete(`/inventory/${id}/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
 export const fetchKreativityShow = async () => {
@@ -85,51 +94,111 @@ export const createKreativityShow = async (data) => {
 };
 
 export const fetchMacroPlanner = async () => {
-  return apiClient.get("/macroplanner/")
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+  try {
+    const response = await apiClient.get("/macroplanner/");
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const createMacroPlanner = async (data) => {
-  return apiClient.post("/macroplanner/", data)
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const addMacroPlanner = async (planner) => {
+  try {
+    const formData = new FormData();
+    formData.append("grade", planner.grade);
+    formData.append("school", planner.school);
+    formData.append("file", planner.file);
+
+    const response = await apiClient.post("/macroplanner/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const updateMacroPlanner = async (data) => {
-  return apiClient.put("/macroplanner/", data)
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const updateMacroPlanner = async (planner) => {
+  try {
+    const formData = new FormData();
+    formData.append("grade", planner.grade);
+    formData.append("school", planner.school);
+    formData.append("file", planner.file);
+
+    const response = await apiClient.patch(`/macroplanner/${planner.id}/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const deleteMacroPlanner = async () => {
-  return apiClient.delete("/macroplanner/")
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const deleteMacroPlanner = async (id) => {
+  try {
+    const response = await apiClient.delete(`/macroplanner/${id}/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
 export const fetchMicroPlanner = async () => {
-  return apiClient.get("/microplanner/")
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+  try {
+    const response = await apiClient.get("/microplanner/");
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const createMicroPlanner = async (data) => {
-  return apiClient.post("/microplanner/", data)
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const addMicroPlanner = async (planner) => {
+  try {
+    const formData = new FormData();
+    formData.append("month", planner.month);
+    formData.append("school", planner.school);
+    formData.append("microplanner", planner.microplanner);
+
+    const response = await apiClient.post("/microplanner/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const updateMicroPlanner = async (data) => {
-  return apiClient.put("/microplanner/", data)
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const updateMicroPlanner = async (planner) => {
+  try {
+    const formData = new FormData();
+    formData.append("month", planner.month);
+    formData.append("school", planner.school);
+    formData.append("microplanner", planner.microplanner);
+
+    const response = await apiClient.patch(`/microplanner/${planner.id}/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
-export const deleteMicroPlanner = async () => {
-  return apiClient.delete("/microplanner/")
-    .then(response => ({ success: true, data: response.data }))
-    .catch(error => ({ success: false, error }));
+export const deleteMicroPlanner = async (id) => {
+  try {
+    const response = await apiClient.delete(`/microplanner/${id}/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
 export const fetchMonthlyReports = async () => {
@@ -150,6 +219,12 @@ export const createMonthlyReport = async (data) => {
     .catch(error => ({ success: false, error }));
 };
 
+export const updateMonthlyReport = async (data) => {
+  return apiClient.put(`/monthlyreports/${data.id}/`, data)
+    .then(response => ({ success: true, data: response.data }))
+    .catch(error => ({ success: false, error }));
+};
+
 export const deleteMonthlyReport = async (id) => {
   return apiClient.delete(`/monthlyreports/${id}/`)
     .then(response => ({ success: true, data: response.data }))
@@ -166,5 +241,20 @@ export const notifyStudents = async (data) => {
   return apiClient.post("/notify_students/", data)
     .then(response => ({ success: true, data: response.data }))
     .catch(error => ({ success: false, error }));
+};
+
+export const fetchHomeworkReport = async () => {
+  return apiClient.get("/homework_report/")
+    .then(response => ({ success: true, data: response.data }))
+    .catch(error => ({ success: false, error }));
+};
+
+export const fetchAdvocacyReport = async () => {
+  try {
+    const response = await apiClient.get("/advocacyreport/");
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
